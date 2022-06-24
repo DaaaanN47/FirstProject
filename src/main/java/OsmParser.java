@@ -29,21 +29,20 @@ public class OsmParser {
     public static Document getDocument() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-        Document document = builder.parse(new File("/home/kochnev_a/projects/untitled/src/NAB-CH.osm"));
-        return document;
+        return builder.parse(new File("/home/kochnev_a/projects/untitled/src/NAB-CH.osm"));
     }
 
     public static void CheckWayParams(NodeList tagList){
-        for(int j=0; j < tagList.getLength(); j++){
+        for (int j=0; j < tagList.getLength(); j++) {
             Node refNode = tagList.item(j);
-            if(tagList.item(j).getNodeType() != Node.ELEMENT_NODE){
+            if (tagList.item(j).getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
             NamedNodeMap refAttributes = refNode.getAttributes();
-            if(refNode.getNodeName() == "tag"){
+            if (refNode.getNodeName().equals("tag")) {
                 System.out.println(refAttributes.getNamedItem("k").getNodeValue());
                 String str = refAttributes.getNamedItem("k").getNodeValue();
-                if(str =="highway"){
+                if (str.equals(TAG_HIGHWAY)) {
                     System.out.println("Это как минимум дорога");
                     break;
                 }
@@ -68,3 +67,12 @@ public class OsmParser {
         return null;
     }
 }
+//блок иф на всякий если не будет идей
+//if(str ==TAG_HIGHWAY || str == TAG_PRIMARY || str ==TAG_PRIMARY_LINK ||
+//        str ==TAG_LIVING_STREET || str == TAG_RESIDENTIAL || str ==TAG_SECONDARY ||
+//        str ==TAG_TRUCK ||  str ==TAG_TERTIARY || str ==TAG_UNCLASSIFIED ||
+//        str ==TAG_MOTORWAY_LINK || str == TAG_SECONDARY_LINK || str ==TAG_TRUCK_LINK ||
+//        str ==TAG_TERTIARY_LINK || str ==TAG_SERVICE ){
+//        System.out.println("Это как минимум дорога");
+//        break;
+//        }
