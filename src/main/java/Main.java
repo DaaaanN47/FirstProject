@@ -1,29 +1,30 @@
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 //
 public class Main {
-
-
-    HashMap<Long, NodeOSM> nodes = new HashMap<>();
-    HashMap<Long, Way> ways = new HashMap<>();
+    
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        Document document = OsmParser.getDocument();
-        //NodeList rootNode = document.get
+        OsmParser osmParser = new OsmParser();
+        Document document = osmParser.getDocument();
+        Graph graph = osmParser.graph;
         NodeList wayList = document.getElementsByTagName("way");
-        for(int i = 0; i<4; i++){
+        int wayListlength = wayList.getLength();
+
+        for(int i = 0; i<wayListlength; i++) {
             Node way = wayList.item(i);
-            NamedNodeMap attributes = way.getAttributes();
-            System.out.println(attributes.getNamedItem("id").getNodeValue());
-            NodeList tagList = way.getChildNodes();
-            OsmParser.CheckWayParams(tagList);
+            osmParser.CheckWayParams(way);
         }
+        NodeList nodeList = document.getElementsByTagName("node");
+        int nodeListlength = nodeList.getLength();
+        for(int i = 0; i< nodeListlength; i++){
+            osmParser.GetNode(nodeList.item(i));
+        }
+
+        System.out.println("Madina privet");
 
 
     }

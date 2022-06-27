@@ -1,12 +1,16 @@
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class NodeOSM {
     long id;
     double lat;
     double lon;
 
-    public NodeOSM(long id, double lat, double lon) {
+    Map<Long, NodeOSM> linkedNodes = new HashMap<>();
+
+    public NodeOSM(long id) {
         setId(id);
-        setLat(lat);
-        setLon(lon);
     }
 
     public long getId() {
