@@ -11,19 +11,33 @@ public class Main {
         OsmParser osmParser = new OsmParser();
         Document document = osmParser.getDocument();
         Graph graph = osmParser.graph;
-        NodeList wayList = document.getElementsByTagName("way");
-        int wayListlength = wayList.getLength();
-
-        for(int i = 0; i<wayListlength; i++) {
-            Node way = wayList.item(i);
-            osmParser.CheckWayParams(way);
+        System.out.println(System.currentTimeMillis());
+        Node node = document.getFirstChild();
+        NodeList nodeList = node.getChildNodes();
+        int nodeListLenngth = nodeList.getLength();
+        for (int i = 0; i < nodeListLenngth; i++) {
+            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            if(!nodeList.item(i).getNodeName().equals("way")){
+                continue;
+            } else if (nodeList.item(i).getNodeName().equals("relation")) {
+                break;
+            }
+            osmParser.CheckWayParams(nodeList.item(i));
         }
-        NodeList nodeList = document.getElementsByTagName("node");
-        int nodeListlength = nodeList.getLength();
-        for(int i = 0; i< nodeListlength; i++){
-            osmParser.GetNode(nodeList.item(i));
+        System.out.println("ways done");
+        for (int i = 0; i < nodeListLenngth; i++) {
+            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+            if(nodeList.item(i).getNodeName().equals("node")){
+                osmParser.GetNode(nodeList.item(i));
+            } else if (nodeList.item(i).getNodeName().equals("way")) {
+                break;
+            }
         }
-
+        System.out.println(System.currentTimeMillis());
         System.out.println("Madina privet");
 
 

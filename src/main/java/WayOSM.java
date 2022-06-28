@@ -2,8 +2,7 @@ import java.util.*;
 
 public class WayOSM {
     long id;
-    Set<Long> refs = new HashSet<Long>();
-    Map<Long, NodeOSM> wayNodes = new HashMap<>();
+    List<Long> refs = new ArrayList<>();
     
     public long getId() {
         return id;

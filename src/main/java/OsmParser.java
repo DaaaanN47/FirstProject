@@ -34,8 +34,6 @@ public class OsmParser {
 
     public void CheckWayParams(Node way){
         NamedNodeMap attributes = way.getAttributes();
-        long id = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
-        System.out.println(id);
         NodeList tagList = way.getChildNodes();
         int tagListLength = tagList.getLength()-1;
         for (int j=tagListLength; j>0; j--) {
@@ -45,11 +43,9 @@ public class OsmParser {
             }
             NamedNodeMap refAttributes = refNode.getAttributes();
             if (refNode.getNodeName().equals("tag")) {
-                System.out.println(refAttributes.getNamedItem("k").getNodeValue());
                 String keyStr = refAttributes.getNamedItem("k").getNodeValue();
                 if (keyStr.equals(TAG_HIGHWAY)) {
                     String valStr = refAttributes.getNamedItem("v").getNodeValue();
-                    System.out.println(valStr);
                     boolean isAdded = roadTypes.add(valStr);
                     if(!isAdded){
                         GetWay(attributes, tagList);
@@ -61,7 +57,6 @@ public class OsmParser {
                 }
                 continue;
             }
-            System.out.println("ref: " + refAttributes.getNamedItem("ref").getNodeValue());
         }
     }
     private void GetWay(NamedNodeMap atributes, NodeList tagList){
@@ -88,38 +83,42 @@ public class OsmParser {
         NamedNodeMap attributes = node.getAttributes();
         long id = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
         graph.wayMap.entrySet().stream().forEach(entry-> {
-            boolean isAdded = entry.getValue().refs.add(id);
-            if(!isAdded){
-                NodeOSM nodeOSM = new NodeOSM(id);
-                try {
-                    nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
-                    nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-                } catch (Exception e) {
-                    System.out.println("id: " + id);
-                    System.out.println("lat: " + attributes.getNamedItem("lat").getNodeValue());
-                    System.out.println("lon: " + attributes.getNamedItem("lon").getNodeValue());
+            boolean isAdded = entry.getValue().refs.contains(id);
+            if(!isAdded) {
+                if (!isAdded) {
+                    NodeOSM nodeOSM = new NodeOSM(id);
+                    try {
+                        nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
+                        nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
+                    } catch (Exception e) {
+                        System.out.println("id: " + id);
+                        System.out.println("lat: " + attributes.getNamedItem("lat").getNodeValue());
+                        System.out.println("lon: " + attributes.getNamedItem("lon").getNodeValue());
+                    }
+                    graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
+                } else {
+                    entry.getValue().refs.remove(id);
                 }
-                graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
-                entry.getValue().wayNodes.put(nodeOSM.getId(), nodeOSM);
-            }
-            else{
-                entry.getValue().refs.remove(id);
             }
         });
-//        graph.wayMap.entrySet().forEach(entry-> {
-//            boolean isAdded = entry.getValue().refs.add(id);
-//                if(!isAdded){
-//                    NodeOSM nodeOSM = new NodeOSM(id);
-//                    nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
-//                    nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-//                    graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
-//                    entry.getValue().wayNodes.put(nodeOSM.getId(), nodeOSM);
-//                    System.out.println("глянули точку с айди: " + nodeOSM.getId());
-//                }
-//                else{
-//                    entry.getValue().refs.remove(id);
-//                }
-//        });
     }
 
 }
+//if (graph.nodeMap.containsKey(id)){
+//        try {
+//        graph.nodeMap.get(id).setIsCrossRoad(true);
+//        graph.nodeMap.get(id).waysHasNode.add(entry.getKey());
+//        }catch (Exception e){
+//        System.out.println(e);
+//        }
+//
+//        }else {
+//        NodeOSM nodeOSM = new NodeOSM(id);
+//        nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
+//        nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
+//        nodeOSM.waysHasNode.add(entry.getKey());
+//        if(entry.getValue().refs.get(0)==id || entry.getValue().refs.get(entry.getValue().refs.size()-1)==id){
+//        graph.nodeMap.get(id).isCrossRoad= true;
+//        }
+//        graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
+//        }

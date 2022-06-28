@@ -1,13 +1,24 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NodeOSM {
     long id;
     double lat;
     double lon;
 
-    Map<Long, NodeOSM> linkedNodes = new HashMap<>();
+    boolean isCrossRoad;
+
+    public boolean isCrossRoad() {
+        return isCrossRoad;
+    }
+
+    public void setIsCrossRoad(boolean crossRoad) {
+        isCrossRoad = crossRoad;
+    }
+
+    Set<Long> linkedNodes = new HashSet<>();
+
+     WayOSM way;
+     Set<Long> waysHasNode = new HashSet<>();
 
     public NodeOSM(long id) {
         setId(id);
