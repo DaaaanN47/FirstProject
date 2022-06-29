@@ -6,7 +6,7 @@ public class NodeOSM {
     private double lon;
 
     private boolean isCrossRoad;
-
+    Set<Long> waysHasNode = new HashSet<>();
     public boolean isCrossRoad() {
         return isCrossRoad;
     }
@@ -17,9 +17,6 @@ public class NodeOSM {
     }
 
     Set<Long> linkedNodes = new HashSet<>();
-
-     WayOSM way;
-     Set<Long> waysHasNode = new HashSet<>();
 
     public NodeOSM(long id) {
         setId(id);

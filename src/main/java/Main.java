@@ -37,6 +37,11 @@ public class Main {
                 break;
             }
         }
+        graph.wayMap.entrySet().stream().forEach(e->{
+            graph.getEdgesFromWay(e.getValue());
+        });
+        graph.getVertexesFromEdges();
+        graph.fillVertexMap();
         System.out.println(System.currentTimeMillis());
         System.out.println("Madina privet");
 

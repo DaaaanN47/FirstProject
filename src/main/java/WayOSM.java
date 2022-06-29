@@ -3,6 +3,8 @@ import java.util.*;
 public class WayOSM {
     private long id;
     List<Long> refs = new ArrayList<>();
+
+
     
     public long getId() {
         return id;
@@ -15,4 +17,6 @@ public class WayOSM {
     public WayOSM(long id) {
         setId(id);
     }
+
+
 }
