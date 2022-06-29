@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class WayOSM {
-    long id;
+    private long id;
     List<Long> refs = new ArrayList<>();
     
     public long getId() {

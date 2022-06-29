@@ -1,5 +1,5 @@
 public class Vertex {
-    long id;
-    double lat;
-    double lon;
+    private long id;
+    private double lat;
+    private double lon;
 }

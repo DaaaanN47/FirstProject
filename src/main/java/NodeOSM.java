@@ -1,18 +1,19 @@
 import java.util.*;
 
 public class NodeOSM {
-    long id;
-    double lat;
-    double lon;
+    private long id;
+    private double lat;
+    private double lon;
 
-    boolean isCrossRoad;
+    private boolean isCrossRoad;
 
     public boolean isCrossRoad() {
         return isCrossRoad;
     }
 
-    public void setIsCrossRoad(boolean crossRoad) {
+    public void setIsCrossRoad(boolean crossRoad, long id) {
         isCrossRoad = crossRoad;
+        waysHasNode.add(id);
     }
 
     Set<Long> linkedNodes = new HashSet<>();

@@ -81,23 +81,32 @@ public class OsmParser {
     
     public void GetNode(Node node) {
         NamedNodeMap attributes = node.getAttributes();
-        long id = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
-        graph.wayMap.entrySet().stream().forEach(entry-> {
-            boolean isAdded = entry.getValue().refs.contains(id);
-            if(!isAdded) {
-                if (!isAdded) {
-                    NodeOSM nodeOSM = new NodeOSM(id);
-                    try {
-                        nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
-                        nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-                    } catch (Exception e) {
-                        System.out.println("id: " + id);
-                        System.out.println("lat: " + attributes.getNamedItem("lat").getNodeValue());
-                        System.out.println("lon: " + attributes.getNamedItem("lon").getNodeValue());
-                    }
+        long nodeId = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
+
+        graph.wayMap.entrySet().forEach(entry-> {
+            long wayId = entry.getKey();
+            boolean isContain = entry.getValue().refs.contains(nodeId);
+            if (isContain) {
+                if (graph.nodeMap.containsKey(nodeId)){
+                    graph.nodeMap.get(nodeId).setIsCrossRoad(true, wayId);
+                    //graph.nodeMap.get(nodeId).waysHasNode.add(wayId);
+                }
+                else{
+                    NodeOSM nodeOSM = new NodeOSM(nodeId);
+                    nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
+                    nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
+                    nodeOSM.waysHasNode.add(entry.getKey());
                     graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
-                } else {
-                    entry.getValue().refs.remove(id);
+                    if (entry.getValue().refs.get(0) == nodeId || entry.getValue().refs.get(entry.getValue().refs.size() - 1) == nodeId) {
+                        try {
+
+                            graph.nodeMap.get(nodeId).setIsCrossRoad(true, wayId);
+
+                        }catch (Exception e){
+                            System.out.println(e);
+                        }
+                    }
+
                 }
             }
         });
