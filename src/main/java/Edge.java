@@ -1,39 +1,67 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Edge {
     private long id;
-    private long firstVertId;
-    private long secondVertId;
+    private long startVertexId;
+    private long finishvertexId;
+
+    private double weight;
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
 
     public long getId() {
         return id;
     }
+    public List<Long> nodesBetweenVertexes = new ArrayList<>();
 
     public void setId(long id) {
         this.id = id;
     }
 
-    public long getFirstVertId() {
-        return firstVertId;
+    public long getStartVertexId() {
+        return startVertexId;
     }
 
-    public void setFirstVert(long firstVert) {
-        this.firstVertId = firstVert;
+    public void setStartVertId(long firstVert) {
+        this.startVertexId = firstVert;
     }
 
-    public long getSecondVertId() {
-        return secondVertId;
+    public long getFinishvertexId() {
+        return finishvertexId;
     }
-
-    public void setSecondVert(long secondVert) {
-        this.secondVertId = secondVert;
+    public void setFinishVertId(long secondVert) {
+        this.finishvertexId = secondVert;
     }
 
     public Edge(long id, long firstVert, long secondVert) {
         setId(id);
-        setFirstVert(firstVert);
-        setSecondVert(secondVert);
+        setStartVertId(firstVert);
+        setFinishVertId(secondVert);
     }
 
-
+    public Long getFirstorLastNode(long id){
+        if(id==getStartVertexId()){
+            return getFinishvertexId();
+        }
+        if(id==getFinishvertexId()){
+            return getStartVertexId();
+        }
+        return Long.valueOf(0);
+    }
+    public void setNodesInEdge(WayOSM way){
+        int startNodeIndex = way.refs.indexOf(startVertexId);
+        int finishNodeIndex = way.refs.indexOf(finishvertexId);
+        for(int i = startNodeIndex; i<finishNodeIndex+1; i++){
+                nodesBetweenVertexes.add(way.refs.get(i));
+        }
+    }
 
 
 }

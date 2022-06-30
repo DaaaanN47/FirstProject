@@ -11,11 +11,14 @@ public class Graph {
     Map<Long, Vertex> vertexMap = new HashMap<>();
 
     //хранит в себе айдишки вершин и список прилегающих ребер
-    Map<Long, ArrayList<Long>> vertexes = new HashMap<>();
+    Map<Long, ArrayList<Long>> vertexesAnditsEdges = new HashMap<>();
 
+    Map<Long,Edge> edgeMap = new HashMap<>();
     int edgeId=0;
 
+    //поле для хранения айдишки точки начала грани.
     long nodeId;
+
 
     private void ChangeIntermediateNodeId(long id){
         nodeId = id;
@@ -24,9 +27,9 @@ public class Graph {
     //получаем список всех вершин
     public void getVertexesFromEdges(){
         edges.stream().forEach(e-> {
-            Vertex vertex = new Vertex(e.getFirstVertId(),nodeMap.get(e.getFirstVertId()).getLat(),nodeMap.get(e.getFirstVertId()).getLon());
+            Vertex vertex = new Vertex(e.getStartVertexId(),nodeMap.get(e.getStartVertexId()).getLat(),nodeMap.get(e.getStartVertexId()).getLon());
             vertexMap.put(vertex.getId(), vertex);
-            Vertex vertex1 = new Vertex(e.getSecondVertId(),nodeMap.get(e.getSecondVertId()).getLat(),nodeMap.get(e.getSecondVertId()).getLon());
+            Vertex vertex1 = new Vertex(e.getFinishvertexId(),nodeMap.get(e.getFinishvertexId()).getLat(),nodeMap.get(e.getFinishvertexId()).getLon());
             vertexMap.put(vertex1.getId(), vertex1);
         });
     }
@@ -37,14 +40,14 @@ public class Graph {
         {
             ArrayList<Long> list = new ArrayList<>();
             list.add(e.getId());
-            if(vertexes.containsKey(e.getFirstVertId())){
-                vertexes.get(e.getFirstVertId()).add(e.getId());
+            if(vertexesAnditsEdges.containsKey(e.getStartVertexId())){
+                vertexesAnditsEdges.get(e.getStartVertexId()).add(e.getId());
             }
-            else if(vertexes.containsKey(e.getSecondVertId())){
-                vertexes.get(e.getSecondVertId()).add(e.getId());
+            else if(vertexesAnditsEdges.containsKey(e.getFinishvertexId())){
+                vertexesAnditsEdges.get(e.getFinishvertexId()).add(e.getId());
             }else{
-                vertexes.put(e.getFirstVertId(),list);
-                vertexes.put(e.getSecondVertId(),list);
+                vertexesAnditsEdges.put(e.getStartVertexId(),list);
+                vertexesAnditsEdges.put(e.getFinishvertexId(),list);
             }
         });
     }
@@ -66,6 +69,7 @@ public class Graph {
             Edge edge = new Edge(edgeId,nodeId,nodeMap.get(wayOSM.refs.get(wayOSM.refs.size()-1)).getId());
             edgeId++;
             edges.add(edge);
+            edge.setNodesInEdge(wayOSM);
         }
         else {
             wayOSM.refs.stream().skip(1).forEach(e->{
@@ -74,8 +78,45 @@ public class Graph {
                     edgeId++;
                     ChangeIntermediateNodeId(nodeMap.get(e).getId());
                     edges.add(edge);
+                    edge.setNodesInEdge(wayOSM);
                 }
             });
         }
     }
+    public void getEdgeWeights(){
+        double weight=0;
+        edges.forEach(e->{
+           calculateWeight(e);
+        });
+    }
+    public void ConvertEdgeSetIntoHashMap(){
+        edges.stream().forEach(e->{
+            edgeMap.put(e.getId(),e);
+        });
+    }
+    private void calculateWeight(Edge edge) {
+    double weight=0;
+        NodeOSM node = nodeMap.get(edge.getStartVertexId());
+        for(int i=1;i<edge.nodesBetweenVertexes.size();i++) {
+            weight= weight + CalculateDistance(node, nodeMap.get(edge.nodesBetweenVertexes.get(i)));
+            node = nodeMap.get(edge.nodesBetweenVertexes.get(i));
+        }
+        edge.setWeight(weight);
+    }
+    private double CalculateDistance(NodeOSM nodeOSM, NodeOSM nodeOSM1){
+        double radius = 6378137;
+        double degreeConvert = Math.PI/180;
+
+        double x1  = Math.cos(degreeConvert * nodeOSM.getLat()) * Math.cos(degreeConvert * nodeOSM.getLon());
+        double x2  = Math.cos(degreeConvert * nodeOSM1.getLat()) * Math.cos(degreeConvert * nodeOSM1.getLon());
+
+        double y1  = Math.cos(degreeConvert * nodeOSM.getLat()) * Math.sin(degreeConvert * nodeOSM.getLon());
+        double y2  = Math.cos(degreeConvert * nodeOSM1.getLat()) * Math.sin(degreeConvert * nodeOSM1.getLon());
+
+        double z1  = Math.sin(degreeConvert * nodeOSM.getLat());
+        double z2  = Math.sin(degreeConvert * nodeOSM1.getLat());
+
+        return radius * Math.acos(x1 * x2 + y1 * y2 + z1 * z2);
+    }
+
 }

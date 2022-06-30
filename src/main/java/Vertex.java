@@ -2,6 +2,22 @@ public class Vertex {
     private long id;
     private double lat;
     private double lon;
+
+    private Vertex prevVertex;
+    private double distFromStart;
+
+    public double getDistFromStart() {
+        return distFromStart;
+    }
+    public void setDistFromStart(double distFromStart) {
+        this.distFromStart = distFromStart;
+    }
+    public Vertex getPrevVertex() {
+        return prevVertex;
+    }
+    public void setPrevVertex(Vertex prevVertex) {
+        this.prevVertex = prevVertex;
+    }
     public long getId() {
         return id;
     }

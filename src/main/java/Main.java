@@ -37,12 +37,19 @@ public class Main {
                 break;
             }
         }
+        System.out.println(System.currentTimeMillis() + " nodes done" );
         graph.wayMap.entrySet().stream().forEach(e->{
             graph.getEdgesFromWay(e.getValue());
         });
+        System.out.println(System.currentTimeMillis() + " edges done" );
         graph.getVertexesFromEdges();
         graph.fillVertexMap();
-        System.out.println(System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis() + " vertex done" );
+        graph.getEdgeWeights();
+        System.out.println(System.currentTimeMillis() + " weights done" );
+        graph.ConvertEdgeSetIntoHashMap();
+        DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
+
         System.out.println("Madina privet");
 
 
