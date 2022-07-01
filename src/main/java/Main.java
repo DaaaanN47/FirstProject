@@ -48,7 +48,10 @@ public class Main {
         graph.getEdgeWeights();
         System.out.println(System.currentTimeMillis() + " weights done" );
         graph.ConvertEdgeSetIntoHashMap();
-        DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
+        CoordinatesTree root = new CoordinatesTree();
+        root.setRootCoordinates();
+        root.getChunks();
+        //DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
 
         System.out.println("Madina privet");
 

@@ -3,6 +3,15 @@ public class Vertex {
     private double lat;
     private double lon;
 
+    public long getSquareIndex() {
+        return squareIndex;
+    }
+
+    public void setSquareIndex(long squareIndex) {
+        this.squareIndex = squareIndex;
+    }
+
+    private long squareIndex;
     private Vertex prevVertex;
     private double distFromStart;
 
