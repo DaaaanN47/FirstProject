@@ -5,19 +5,60 @@ import java.util.Set;
 
 public class CoordinatesTree {
 
+
+
+    int numberOfParents;
+
+    public double getBotLeftLat() {
+        return botLeftLat;
+    }
+
+    public void setBotLeftLat(double botLeftLat) {
+        this.botLeftLat = botLeftLat;
+    }
+
+    public double getBotLeftLon() {
+        return botLeftLon;
+    }
+
+    public void setBotLeftLon(double botLeftLon) {
+        this.botLeftLon = botLeftLon;
+    }
+
+    public double getTopRightLat() {
+        return topRightLat;
+    }
+
+    public void setTopRightLat(double topRightLat) {
+        this.topRightLat = topRightLat;
+    }
+
+    public double getTopRightLon() {
+        return topRightLon;
+    }
+
+    public void setTopRightLon(double topRightLon) {
+        this.topRightLon = topRightLon;
+    }
+
+    private double botLeftLat;
+    private double botLeftLon;
+    private double topRightLat;
+    private double topRightLon;
     List<CoordinatesTree> children = new ArrayList<>();
     Set<Long> containedVertexes = new HashSet<>();
 
-    int numberOfParents;
-    private double botLeftLat;
-    private double botLeftLon;
+    //конструктор для корневого элемента
+    public CoordinatesTree(int i){
+        this.setRootCoordinates();
+        this.getChunks();
+    }
+    // конструктор для всех детей
+    public CoordinatesTree(){
 
+    }
 
-
-    private double topRightLat;
-    private double topRightLon;
-
-    public void setCoordinates(int quarter, CoordinatesTree parent){
+    private void setCoordinates(int quarter, CoordinatesTree parent){
             switch (quarter){
                 case 1:
                     this.topRightLat = parent.topRightLat;
@@ -53,7 +94,7 @@ public class CoordinatesTree {
     }
 
     public String getChunks(){
-        if(this.numberOfParents<8){
+        if(this.numberOfParents<12){
             for(int i=0;i<4;i++) {
                 CoordinatesTree coordinatesTree = new CoordinatesTree();
                 coordinatesTree.numberOfParents=this.numberOfParents+1;
@@ -66,7 +107,27 @@ public class CoordinatesTree {
         return null;
     }
     //метод добавления точки и распределения ее в нужный блок карты
-    public void addVertexToChunk(Vertex vertex){
-
+    public String addVertexToChunk(Vertex vertex){
+        this.containedVertexes.add(vertex.getId());
+        if(!this.children.isEmpty()){
+            //проверка на то, в какой части квадарата находится точка верхней или нижней
+            if(vertex.getLat()>(this.getTopRightLat()+this.getBotLeftLat())/2){
+                if (vertex.getLon()>(this.getTopRightLon()+this.getBotLeftLon())/2){
+                    children.get(0).addVertexToChunk(vertex);
+                }
+                else {
+                    children.get(1).addVertexToChunk(vertex);
+                }
+            }
+            else {
+                if (vertex.getLon()>(this.getTopRightLon()+this.getBotLeftLon())/2){
+                    children.get(3).addVertexToChunk(vertex);
+                }
+                else{
+                    children.get(2).addVertexToChunk(vertex);
+                }
+            }
+        }
+        return null;
     }
 }

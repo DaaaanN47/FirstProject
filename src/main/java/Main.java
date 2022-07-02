@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class Main {
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+        CoordinatesTree root = new CoordinatesTree(1);
         OsmParser osmParser = new OsmParser();
         Document document = osmParser.getDocument();
         Graph graph = osmParser.graph;
@@ -42,15 +43,12 @@ public class Main {
             graph.getEdgesFromWay(e.getValue());
         });
         System.out.println(System.currentTimeMillis() + " edges done" );
-        graph.getVertexesFromEdges();
+        graph.getVertexesFromEdges(root);
         graph.fillVertexMap();
         System.out.println(System.currentTimeMillis() + " vertex done" );
         graph.getEdgeWeights();
         System.out.println(System.currentTimeMillis() + " weights done" );
         graph.ConvertEdgeSetIntoHashMap();
-        CoordinatesTree root = new CoordinatesTree();
-        root.setRootCoordinates();
-        root.getChunks();
         //DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
 
         System.out.println("Madina privet");

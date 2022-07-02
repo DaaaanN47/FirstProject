@@ -24,13 +24,21 @@ public class Graph {
         nodeId = id;
     }
 
-    //получаем список всех вершин
-    public void getVertexesFromEdges(){
+    //получаем список всех вершин, ТУТ НАДО СДЕЛАТЬ ПРОВЕРКУ НА ТО ЕСТЬ ЛИ УЖЕ ТАКАЯ ВЕРШИНА ТАК КАК МЫ МОЖЕМ СОЗДАЬ
+    // ОДИНАКОВУЮ ВЕРШИНУ В ВИДЕ КОНЦА ОДНОГО РЕБРА И НАЧАЛА ДРУГОГО
+    //НУЖНО БРАТЬ ЭЛЕМЕНТЫ ИЗ КОЛЛЕКЦИИ ВЕРШИН И ЕГО ГРАНЕЙ ЧТОБЫ КОЛИЧЕВО вершин СОВПАДАЛО
+    public void getVertexesFromEdges(CoordinatesTree root){
         edges.stream().forEach(e-> {
-            Vertex vertex = new Vertex(e.getStartVertexId(),nodeMap.get(e.getStartVertexId()).getLat(),nodeMap.get(e.getStartVertexId()).getLon());
-            vertexMap.put(vertex.getId(), vertex);
-            Vertex vertex1 = new Vertex(e.getFinishvertexId(),nodeMap.get(e.getFinishvertexId()).getLat(),nodeMap.get(e.getFinishvertexId()).getLon());
-            vertexMap.put(vertex1.getId(), vertex1);
+            if(!vertexMap.containsKey(e.getStartVertexId())){
+                Vertex vertex = new Vertex(e.getStartVertexId(),nodeMap.get(e.getStartVertexId()).getLat(),nodeMap.get(e.getStartVertexId()).getLon());
+                vertexMap.put(vertex.getId(), vertex);
+                root.addVertexToChunk(vertex);
+            }
+            if(vertexMap.containsKey(e.getFinishvertexId())){
+                Vertex vertex1 = new Vertex(e.getFinishvertexId(),nodeMap.get(e.getFinishvertexId()).getLat(),nodeMap.get(e.getFinishvertexId()).getLon());
+                vertexMap.put(vertex1.getId(), vertex1);
+                root.addVertexToChunk(vertex1);
+            }
         });
     }
     //Получаем мапу <айди вершины, список ребер>, если при пробеге по ребрам мы встречаем точку, которую уже ранее создавали,
