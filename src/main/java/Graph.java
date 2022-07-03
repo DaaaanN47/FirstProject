@@ -28,22 +28,15 @@ public class Graph {
     // ОДИНАКОВУЮ ВЕРШИНУ В ВИДЕ КОНЦА ОДНОГО РЕБРА И НАЧАЛА ДРУГОГО
     //НУЖНО БРАТЬ ЭЛЕМЕНТЫ ИЗ КОЛЛЕКЦИИ ВЕРШИН И ЕГО ГРАНЕЙ ЧТОБЫ КОЛИЧЕВО вершин СОВПАДАЛО
     public void getVertexesFromEdges(CoordinatesTree root){
-        edges.stream().forEach(e-> {
-            if(!vertexMap.containsKey(e.getStartVertexId())){
-                Vertex vertex = new Vertex(e.getStartVertexId(),nodeMap.get(e.getStartVertexId()).getLat(),nodeMap.get(e.getStartVertexId()).getLon());
+        vertexesAnditsEdges.entrySet().forEach(e-> {
+                Vertex vertex = new Vertex(e.getKey(),nodeMap.get(e.getKey()).getLat(),nodeMap.get(e.getKey()).getLon());
                 vertexMap.put(vertex.getId(), vertex);
                 root.addVertexToChunk(vertex);
-            }
-            if(vertexMap.containsKey(e.getFinishvertexId())){
-                Vertex vertex1 = new Vertex(e.getFinishvertexId(),nodeMap.get(e.getFinishvertexId()).getLat(),nodeMap.get(e.getFinishvertexId()).getLon());
-                vertexMap.put(vertex1.getId(), vertex1);
-                root.addVertexToChunk(vertex1);
-            }
         });
     }
     //Получаем мапу <айди вершины, список ребер>, если при пробеге по ребрам мы встречаем точку, которую уже ранее создавали,
     // то просто добавляем к списку ребер текущее и идем дальше
-    public void fillVertexMap(){
+    public void fillVertexAndEdgesMap(){
         edges.stream().forEach(e->
         {
             ArrayList<Long> list = new ArrayList<>();

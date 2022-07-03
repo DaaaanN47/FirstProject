@@ -3,7 +3,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.HashMap;
+
 //
 public class Main {
     
@@ -43,8 +43,8 @@ public class Main {
             graph.getEdgesFromWay(e.getValue());
         });
         System.out.println(System.currentTimeMillis() + " edges done" );
+        graph.fillVertexAndEdgesMap();
         graph.getVertexesFromEdges(root);
-        graph.fillVertexMap();
         System.out.println(System.currentTimeMillis() + " vertex done" );
         graph.getEdgeWeights();
         System.out.println(System.currentTimeMillis() + " weights done" );
