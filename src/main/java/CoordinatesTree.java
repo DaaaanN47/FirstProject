@@ -75,6 +75,7 @@ public class CoordinatesTree {
     }
      public Set<Long> getNearestVertexes(Vertex vertex){
          if(currentLevel<maxLevel){
+             // по идее тут нужно сделать проверку на то что лист пустой и закинуть всех потомков из метода выше
              return children.get(getIndex(vertex)).getNearestVertexes(vertex);
          } else {
              return new HashSet<>(containedVertexes);

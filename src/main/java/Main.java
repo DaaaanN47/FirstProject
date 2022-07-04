@@ -33,11 +33,9 @@ public class Main {
 
         Node node = document.getFirstChild();
         NodeList nodeList = node.getChildNodes();
+
         int nodeListLenngth = nodeList.getLength();
         for (int i = 0; i < nodeListLenngth; i++) {
-            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
             if(!nodeList.item(i).getNodeName().equals("way")){
                 continue;
             } else if (nodeList.item(i).getNodeName().equals("relation")) {
@@ -48,9 +46,6 @@ public class Main {
 
         System.out.println("ways done");
         for (int i = 0; i < nodeListLenngth; i++) {
-            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
             if(nodeList.item(i).getNodeName().equals("node")){
                 osmParser.GetNode(nodeList.item(i));
             } else if (nodeList.item(i).getNodeName().equals("way")) {
@@ -77,16 +72,27 @@ public class Main {
 //        double startLat  = in.nextDouble();
 //        System.out.println("Долгота стартовой точки: ");
 //        double startLon  = in.nextDouble();
-        Vertex start = new Vertex( 55.7567540,52.4142762);
+        Vertex start = new Vertex( 557530261,524101473);
+        Vertex finish = new Vertex( 55.7450844,523967016);
         Set<Long> nearestvertexes = root.getNearestVertexes(start);
+        Set<Long> nearestvertexes1 = root.getNearestVertexes(finish);
         if(nearestvertexes==null){
             System.out.println("Точка вне рассматриваемой зоны");
         }
-        Map<Long,Vertex> nearvertex = new HashMap<>();
+        HashMap<Long,Vertex> nearStartvertex = new HashMap<>();
         nearestvertexes.stream().forEach(e->{
-            nearvertex.put(e,graph.vertexMap.get(e));
+            nearStartvertex.put(e,graph.vertexMap.get(e));
         });
-
+        HashMap<Long,Vertex> nearFinishtvertex = new HashMap<>();
+        nearestvertexes1.stream().forEach(e->{
+            nearFinishtvertex.put(e,graph.vertexMap.get(e));
+        });
+        Vertex startVertex  = graph.getClosestVertex(nearStartvertex,start);
+        Vertex finVertex  = graph.getClosestVertex(nearFinishtvertex,finish);
+//        DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
+//        dijkstraAlgorithm.setInfDistToVertexes(graph,startVertex);
+//        dijkstraAlgorithm.CheckVertexes(graph,startVertex);
+        System.out.println(finVertex.getDistFromStart());
         System.out.println("Madina privet");
     }
 }

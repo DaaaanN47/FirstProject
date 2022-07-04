@@ -2,6 +2,21 @@ import java.util.*;
 
 public class Graph {
     //нужны перекрестки и первая и последняя точка вая это точно пересечение. по ним и будет движение
+    int edgeId=0;
+
+    //поле для хранения айдишки точки начала грани.
+    long nodeId;
+    double distance;
+    Long vertexId;
+
+    public long getVertexId() {
+        return vertexId;
+    }
+
+    public void setVertexId(long vertexId) {
+        this.vertexId = vertexId;
+    }
+
     Map<Long, WayOSM> wayMap = new HashMap<>();
     Map<Long, NodeOSM> nodeMap = new HashMap<>();
 
@@ -14,10 +29,18 @@ public class Graph {
     Map<Long, ArrayList<Long>> vertexesAnditsEdges = new HashMap<>();
 
     Map<Long,Edge> edgeMap = new HashMap<>();
-    int edgeId=0;
 
-    //поле для хранения айдишки точки начала грани.
-    long nodeId;
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+
+
+
 
 
     private void ChangeIntermediateNodeId(long id){
@@ -98,25 +121,36 @@ public class Graph {
     double weight=0;
         NodeOSM node = nodeMap.get(edge.getStartVertexId());
         for(int i=1;i<edge.nodesBetweenVertexes.size();i++) {
-            weight= weight + CalculateDistance(node, nodeMap.get(edge.nodesBetweenVertexes.get(i)));
+            weight= weight + CalculateDistance(node.getLat(), node.getLon(), nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLat(),nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLon());
             node = nodeMap.get(edge.nodesBetweenVertexes.get(i));
         }
         edge.setWeight(weight);
     }
-    private double CalculateDistance(NodeOSM nodeOSM, NodeOSM nodeOSM1){
+    private double CalculateDistance(double strLat, double strLon, double finLat, double finLon){
         double radius = 6378137;
         double degreeConvert = Math.PI/180;
 
-        double x1  = Math.cos(degreeConvert * nodeOSM.getLat()) * Math.cos(degreeConvert * nodeOSM.getLon());
-        double x2  = Math.cos(degreeConvert * nodeOSM1.getLat()) * Math.cos(degreeConvert * nodeOSM1.getLon());
+        double x1  = Math.cos(degreeConvert * strLat) * Math.cos(degreeConvert * strLon);
+        double x2  = Math.cos(degreeConvert * finLat) * Math.cos(degreeConvert * finLon);
 
-        double y1  = Math.cos(degreeConvert * nodeOSM.getLat()) * Math.sin(degreeConvert * nodeOSM.getLon());
-        double y2  = Math.cos(degreeConvert * nodeOSM1.getLat()) * Math.sin(degreeConvert * nodeOSM1.getLon());
+        double y1  = Math.cos(degreeConvert * strLat) * Math.sin(degreeConvert * strLon);
+        double y2  = Math.cos(degreeConvert * finLat) * Math.sin(degreeConvert * finLon);
 
-        double z1  = Math.sin(degreeConvert * nodeOSM.getLat());
-        double z2  = Math.sin(degreeConvert * nodeOSM1.getLat());
+        double z1  = Math.sin(degreeConvert * strLat);
+        double z2  = Math.sin(degreeConvert * finLat);
 
         return radius * Math.acos(x1 * x2 + y1 * y2 + z1 * z2);
     }
 
+    public Vertex getClosestVertex(HashMap<Long,Vertex> vertexMap, Vertex vertex){
+        setDistance(Double.MAX_VALUE);
+        vertexMap.forEach((key, value) -> {
+            if (getDistance() > CalculateDistance(vertex.getLat(), vertex.getLon(), value.getLat(), value.getLon())) {
+                setDistance(CalculateDistance(vertex.getLat(), vertex.getLon(), value.getLat(), value.getLon()));
+                setVertexId(value.getId());
+            }
+        });
+        Vertex vertex1 = vertexMap.get(getVertexId());
+        return vertex1 ;
+    }
 }

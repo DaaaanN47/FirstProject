@@ -27,9 +27,9 @@ public class OsmParser {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         graph = new Graph();
-        //String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
+        String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
         ///home/kochnev_a/projects/untitled/src/NAB-CH.osm
-        return builder.parse("/home/kochnev_a/projects/untitled/src/NAB-CH.osm");
+        return builder.parse(dir);
     }
 
     public void CheckWayParams(Node way){
@@ -83,26 +83,25 @@ public class OsmParser {
         NamedNodeMap attributes = node.getAttributes();
         long nodeId = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
 
-        graph.wayMap.entrySet().forEach(entry-> {
-            long wayId = entry.getKey();
-            boolean isContain = entry.getValue().refs.contains(nodeId);
+        graph.wayMap.forEach((key, value) -> {
+            long wayId = key;
+            boolean isContain = value.refs.contains(nodeId);
             if (isContain) {
-                if (graph.nodeMap.containsKey(nodeId)){
+                if (graph.nodeMap.containsKey(nodeId)) {
                     graph.nodeMap.get(nodeId).setIsCrossRoad(true, wayId);
                     //graph.nodeMap.get(nodeId).waysHasNode.add(wayId);
-                }
-                else{
+                } else {
                     NodeOSM nodeOSM = new NodeOSM(nodeId);
                     nodeOSM.setLat(Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()));
                     nodeOSM.setLon(Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-                    nodeOSM.waysHasNode.add(entry.getKey());
+                    nodeOSM.waysHasNode.add(key);
                     graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
-                    if (entry.getValue().refs.get(0) == nodeId || entry.getValue().refs.get(entry.getValue().refs.size() - 1) == nodeId) {
+                    if (value.refs.get(0) == nodeId || value.refs.get(value.refs.size() - 1) == nodeId) {
                         try {
 
                             graph.nodeMap.get(nodeId).setIsCrossRoad(true, wayId);
 
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             System.out.println(e);
                         }
                     }
