@@ -28,17 +28,16 @@ public class Graph {
     // ОДИНАКОВУЮ ВЕРШИНУ В ВИДЕ КОНЦА ОДНОГО РЕБРА И НАЧАЛА ДРУГОГО
     //НУЖНО БРАТЬ ЭЛЕМЕНТЫ ИЗ КОЛЛЕКЦИИ ВЕРШИН И ЕГО ГРАНЕЙ ЧТОБЫ КОЛИЧЕВО вершин СОВПАДАЛО
     public void getVertexesFromEdges(CoordinatesTree root){
-        vertexesAnditsEdges.entrySet().forEach(e-> {
-                Vertex vertex = new Vertex(e.getKey(),nodeMap.get(e.getKey()).getLat(),nodeMap.get(e.getKey()).getLon());
-                vertexMap.put(vertex.getId(), vertex);
-                root.addVertexToChunk(vertex);
+        vertexesAnditsEdges.forEach((key, value) -> {
+            Vertex vertex = new Vertex(key, nodeMap.get(key).getLat(), nodeMap.get(key).getLon());
+            vertexMap.put(vertex.getId(), vertex);
+            root.addVertex(vertex);
         });
     }
     //Получаем мапу <айди вершины, список ребер>, если при пробеге по ребрам мы встречаем точку, которую уже ранее создавали,
     // то просто добавляем к списку ребер текущее и идем дальше
     public void fillVertexAndEdgesMap(){
-        edges.stream().forEach(e->
-        {
+        edges.forEach(e-> {
             ArrayList<Long> list = new ArrayList<>();
             list.add(e.getId());
             if(vertexesAnditsEdges.containsKey(e.getStartVertexId())){

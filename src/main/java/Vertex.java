@@ -3,15 +3,18 @@ public class Vertex {
     private double lat;
     private double lon;
 
-    public long getSquareIndex() {
-        return squareIndex;
+    public CoordinatesTree getPosition() {
+        return position;
     }
 
-    public void setSquareIndex(long squareIndex) {
-        this.squareIndex = squareIndex;
+    public void setPosition(CoordinatesTree position) {
+        if(this.position==null){
+            this.position = position;
+        }
     }
 
-    private long squareIndex;
+    private CoordinatesTree position=null;
+
     private Vertex prevVertex;
     private double distFromStart;
 
@@ -50,9 +53,14 @@ public class Vertex {
     public void setLon(double lon) {
         this.lon = lon;
     }
-
+    // конструктор для вершины на карте
     public Vertex(long id, double lat, double lon) {
         setId(id);
+        setLat(lat);
+        setLon(lon);
+    }
+    //конструктор для создания мнимой вершины из заданных пользователем координат
+    public Vertex(double lat, double lon){
         setLat(lat);
         setLon(lon);
     }

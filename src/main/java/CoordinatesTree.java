@@ -1,133 +1,83 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CoordinatesTree {
 
+    private final double avgLat;
+    private final double avgLon;
+    int currentLevel;
+    int maxLevel;
+    private double minLat;
+    private double minLon;
+    private double maxLat;
+    private double maxLon;
 
 
-    int numberOfParents;
+    private List<CoordinatesTree> children = new ArrayList<>();
+    private Set<Long> containedVertexes = new HashSet<>();
 
-    public double getBotLeftLat() {
-        return botLeftLat;
-    }
 
-    public void setBotLeftLat(double botLeftLat) {
-        this.botLeftLat = botLeftLat;
-    }
-
-    public double getBotLeftLon() {
-        return botLeftLon;
-    }
-
-    public void setBotLeftLon(double botLeftLon) {
-        this.botLeftLon = botLeftLon;
-    }
-
-    public double getTopRightLat() {
-        return topRightLat;
-    }
-
-    public void setTopRightLat(double topRightLat) {
-        this.topRightLat = topRightLat;
-    }
-
-    public double getTopRightLon() {
-        return topRightLon;
-    }
-
-    public void setTopRightLon(double topRightLon) {
-        this.topRightLon = topRightLon;
-    }
-
-    private double botLeftLat;
-    private double botLeftLon;
-    private double topRightLat;
-    private double topRightLon;
-    List<CoordinatesTree> children = new ArrayList<>();
-    Set<Long> containedVertexes = new HashSet<>();
 
     //конструктор для корневого элемента
-    public CoordinatesTree(int i){
-        this.setRootCoordinates();
-        this.getChunks();
+    public CoordinatesTree(int maxLevel, double minLat, double minLon, double maxLat, double maxLon){
+        this.maxLevel = maxLevel;
+        this.minLat = minLat;
+        this.minLon = minLon;
+        this.maxLat = maxLat;
+        this.maxLon = maxLon;
+        this.currentLevel = 1;
+        avgLat = (maxLat + minLat) / 2;
+        avgLon = (maxLon + minLon) / 2;
+        this.createChildren();
     }
     // конструктор для всех детей
-    public CoordinatesTree(){
-
+    private CoordinatesTree(int maxLevel, int currentLevel, double minLat, double minLon, double maxLat, double maxLon){
+        this.maxLevel=maxLevel;
+        this.currentLevel= currentLevel;
+        this.minLat = minLat;
+        this.minLon = minLon;
+        this.maxLat = maxLat;
+        this.maxLon = maxLon;
+        avgLat = (maxLat + minLat) / 2;
+        avgLon = (maxLon + minLon) / 2;
+        this.createChildren();
     }
-
-    private void setCoordinates(int quarter, CoordinatesTree parent){
-            switch (quarter){
-                case 1:
-                    this.topRightLat = parent.topRightLat;
-                    this.topRightLon = parent.topRightLon;
-                    this.botLeftLat = (parent.topRightLat + parent.botLeftLat)/2;
-                    this.botLeftLon =(parent.topRightLon+ parent.botLeftLon)/2;
-                    break;
-                case 2:
-                    this.topRightLat = parent.topRightLat;
-                    this.topRightLon =(parent.topRightLon+ parent.botLeftLon)/2;
-                    this.botLeftLat = (parent.topRightLat+parent.botLeftLat)/2;
-                    this.botLeftLon = parent.botLeftLon;
-                    break;
-                case 3:
-                    this.topRightLat = (parent.topRightLat + parent.botLeftLat)/2;
-                    this.topRightLon = (parent.topRightLon + parent.botLeftLon)/2;
-                    this.botLeftLat = parent.botLeftLat;
-                    this.botLeftLon = parent.botLeftLon;
-                    break;
-                case 4:
-                    this.topRightLat = (parent.topRightLat+ parent.botLeftLat)/2;
-                    this.topRightLon = parent.topRightLon;
-                    this.botLeftLat = parent.botLeftLat;
-                    this.botLeftLon = (parent.topRightLon+parent.botLeftLon)/2;
-                    break;
-            }
-    }
-    public void setRootCoordinates(){
-        this.topRightLat = 90;
-        this.topRightLon = 180;
-        this.botLeftLat = -90;
-        this.botLeftLon = -180;
-    }
-
-    public String getChunks(){
-        if(this.numberOfParents<12){
-            for(int i=0;i<4;i++) {
-                CoordinatesTree coordinatesTree = new CoordinatesTree();
-                coordinatesTree.numberOfParents=this.numberOfParents+1;
-                coordinatesTree.setCoordinates(i+1,this);
-                coordinatesTree.getChunks();
-                children.add(coordinatesTree);
-
-            }
+    // здесь четверти я нумаровал как в математике
+    //метод для назначения координат для верхней правой точки и нижней левой точки
+    private void createChildren(){
+        if (currentLevel < maxLevel) {
+            children.add(new CoordinatesTree(maxLevel,currentLevel + 1, avgLat, minLon, maxLat, avgLon));
+            children.add(new CoordinatesTree(maxLevel,currentLevel + 1, avgLat, avgLon, maxLat, maxLon));
+            children.add(new CoordinatesTree(maxLevel,currentLevel + 1, minLat, minLon, avgLat, avgLon));
+            children.add(new CoordinatesTree(maxLevel,currentLevel + 1, minLat, avgLon, avgLat, maxLon));
         }
-        return null;
+    }
+    //четверти отмечаются не как в математике первая и вторая четверть меняются местами
+    private int getIndex(Vertex vertex){
+        int latIndex = vertex.getLat() > avgLat ? 0 : 2;
+        int lonIndex = vertex.getLon() > avgLon ? 1 : 0;
+        return latIndex + lonIndex;
     }
     //метод добавления точки и распределения ее в нужный блок карты
-    public String addVertexToChunk(Vertex vertex){
-        this.containedVertexes.add(vertex.getId());
-        if(!this.children.isEmpty()){
-            //проверка на то, в какой части квадарата находится точка верхней или нижней
-            if(vertex.getLat()>(this.getTopRightLat()+this.getBotLeftLat())/2){
-                if (vertex.getLon()>(this.getTopRightLon()+this.getBotLeftLon())/2){
-                    children.get(0).addVertexToChunk(vertex);
-                }
-                else {
-                    children.get(1).addVertexToChunk(vertex);
-                }
-            }
-            else {
-                if (vertex.getLon()>(this.getTopRightLon()+this.getBotLeftLon())/2){
-                    children.get(3).addVertexToChunk(vertex);
-                }
-                else{
-                    children.get(2).addVertexToChunk(vertex);
-                }
-            }
+    public void addVertex(Vertex vertex){
+        //this.containedVertexes.add(vertex.getId());
+        if(currentLevel<maxLevel){
+            children.get(getIndex(vertex)).addVertex(vertex);
+        } else {
+            containedVertexes.add(vertex.getId());
         }
-        return null;
     }
+    private Set<Long> getVertexesFromParent() {
+        Set<Long> vertexSet = children.get(0).containedVertexes;
+        vertexSet.addAll(children.get(1).containedVertexes);
+        vertexSet.addAll(children.get(2).containedVertexes);
+        vertexSet.addAll(children.get(3).containedVertexes);
+        return vertexSet;
+    }
+     public Set<Long> getNearestVertexes(Vertex vertex){
+         if(currentLevel<maxLevel){
+             return children.get(getIndex(vertex)).getNearestVertexes(vertex);
+         } else {
+             return new HashSet<>(containedVertexes);
+         }
+     }
 }
