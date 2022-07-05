@@ -26,23 +26,16 @@ public class Graph {
     Map<Long, Vertex> vertexMap = new HashMap<>();
 
     //хранит в себе айдишки вершин и список прилегающих ребер
-    Map<Long, ArrayList<Long>> vertexesAnditsEdges = new HashMap<>();
+    Map<Long, List<Long>> vertexesAndItsEdges = new HashMap<>();
 
     Map<Long,Edge> edgeMap = new HashMap<>();
 
     public double getDistance() {
         return distance;
     }
-
     public void setDistance(double distance) {
         this.distance = distance;
     }
-
-
-
-
-
-
     private void ChangeIntermediateNodeId(long id){
         nodeId = id;
     }
@@ -51,7 +44,7 @@ public class Graph {
     // ОДИНАКОВУЮ ВЕРШИНУ В ВИДЕ КОНЦА ОДНОГО РЕБРА И НАЧАЛА ДРУГОГО
     //НУЖНО БРАТЬ ЭЛЕМЕНТЫ ИЗ КОЛЛЕКЦИИ ВЕРШИН И ЕГО ГРАНЕЙ ЧТОБЫ КОЛИЧЕВО вершин СОВПАДАЛО
     public void getVertexesFromEdges(CoordinatesTree root){
-        vertexesAnditsEdges.forEach((key, value) -> {
+        vertexesAndItsEdges.forEach((key, value) -> {
             Vertex vertex = new Vertex(key, nodeMap.get(key).getLat(), nodeMap.get(key).getLon());
             vertexMap.put(vertex.getId(), vertex);
             root.addVertex(vertex);
@@ -61,17 +54,12 @@ public class Graph {
     // то просто добавляем к списку ребер текущее и идем дальше
     public void fillVertexAndEdgesMap(){
         edges.forEach(e-> {
-            ArrayList<Long> list = new ArrayList<>();
+            List<Long> list = vertexesAndItsEdges.getOrDefault(e.getStartVertexId(),new ArrayList<>());
             list.add(e.getId());
-            if(vertexesAnditsEdges.containsKey(e.getStartVertexId())){
-                vertexesAnditsEdges.get(e.getStartVertexId()).add(e.getId());
-            }
-            else if(vertexesAnditsEdges.containsKey(e.getFinishvertexId())){
-                vertexesAnditsEdges.get(e.getFinishvertexId()).add(e.getId());
-            }else{
-                vertexesAnditsEdges.put(e.getStartVertexId(),list);
-                vertexesAnditsEdges.put(e.getFinishvertexId(),list);
-            }
+            vertexesAndItsEdges.put(e.getStartVertexId(),list);
+            list = vertexesAndItsEdges.getOrDefault(e.getFinishvertexId(),new ArrayList<>());
+            list.add(e.getId());
+            vertexesAndItsEdges.put(e.getFinishvertexId(),list);
         });
     }
 

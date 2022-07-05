@@ -1,20 +1,9 @@
-public class Vertex {
+import java.util.Comparator;
+
+public class Vertex implements Comparable<Vertex> {
     private long id;
     private double lat;
     private double lon;
-
-    public CoordinatesTree getPosition() {
-        return position;
-    }
-
-    public void setPosition(CoordinatesTree position) {
-        if(this.position==null){
-            this.position = position;
-        }
-    }
-
-    private CoordinatesTree position=null;
-
     private Vertex prevVertex;
     private double distFromStart;
 
@@ -63,5 +52,16 @@ public class Vertex {
     public Vertex(double lat, double lon){
         setLat(lat);
         setLon(lon);
+    }
+
+    @Override
+    public int compareTo(Vertex vertex) {
+        if(this.getDistFromStart()>vertex.getDistFromStart()){
+            return 1;
+        } else if(this.getDistFromStart()<vertex.getDistFromStart()){
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

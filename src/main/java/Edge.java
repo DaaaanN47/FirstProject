@@ -46,14 +46,12 @@ public class Edge {
         setFinishVertId(secondVert);
     }
 
-    public Long getFirstorLastNode(long id){
-        if(id==getStartVertexId()){
-            return getFinishvertexId();
+    public Long getOtherNode(long id){
+        if(id==startVertexId){
+            return finishvertexId;
+        } else {
+            return startVertexId;
         }
-        if(id==getFinishvertexId()){
-            return getStartVertexId();
-        }
-        return Long.valueOf(0);
     }
     public void setNodesInEdge(WayOSM way){
         int startNodeIndex = way.refs.indexOf(startVertexId);

@@ -1,42 +1,67 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DijkstraAlgorithm {
+
+    Queue<Vertex> vertexQueue = new PriorityQueue<>();
     private List<Long> visitedVertexes = new ArrayList<>();
     public void setInfDistToVertexes(Graph graph, Vertex start){
         graph.vertexMap.entrySet().forEach(e->{
             if(e.getValue().equals(start)){
                 e.getValue().setDistFromStart(0);
-            }else {
+            } else {
                 e.getValue().setDistFromStart(Double.MAX_VALUE);
             }
         });
     }
-    // потенциально рекурсивный метод который будет принимать в себя граф и одну вершину в самом методе будут перебираться все грани
-    //с этой вершиной, на конце грани будут другие точки тоже вызывать этот метод пока точка, в которую придет грань не окажется финишной,
-    //  тогда мы спрашиваем(как и для всех граней), ее предыдущее знрачение пути со старта, если новое меньше старого то мы ставим новое значение.
-    public void CheckVertexes(Graph graph, Vertex start){
-        graph.vertexesAnditsEdges.get(start.getId()).forEach(e->
-        {
-            //айди второй вершины одной из рассматриваемых граней
-            Long id = graph.edgeMap.get(e).getFirstorLastNode(start.getId());
-            if(visitedVertexes.contains(id)){
-                //проверяем старое расстояние до точки с новым
-                if(graph.vertexMap.get(id).getDistFromStart()>start.getDistFromStart() + graph.edgeMap.get(e).getWeight()){
-                    //назначаем новый, более короткий путь
-                    graph.vertexMap.get(id).setDistFromStart(start.getDistFromStart() + graph.edgeMap.get(e).getWeight());
-                    graph.vertexMap.get(id).setPrevVertex(start);
-                    CheckVertexes(graph,graph.vertexMap.get(id));
-                }
+    public void CheckVertexes(Graph graph, Vertex start, Vertex finish){
+        vertexQueue.add(start);
+        //добавили первую точку в очередь о ваозрастанию,
+        //далле пробегаемся по очереди в которой пока один элемент но во время итерации нужно добавить точки которые имеют общее ребро с текущей
+        //точка найдена далее она проверяется на то есть ли она в очереди или нет, если ее там нет то проверяется,
+        // является ли текущее расстояние от старта меньше чем записанное в вершине, если да то добавляем точку в очередь,
+        // если такая точка уже есть в очереди то сравнивается расстояние, записанное в точке в очереди,
+        // с расстоянием в рассматриваемой вершине + вес ребра, если оно второе меньше то мы в объекте меняем старые значения на новые.
+        //остановкой цикла будет то, что расстояние записанное в рассмотримаемой вершине из очереди будет больше чем расстояние в объекте финиша.
+        while(true){
+            Vertex vertex = vertexQueue.poll();
+            if(vertex.getDistFromStart()>finish.getDistFromStart()){
+                break;
+            }else {
+                graph.vertexesAndItsEdges.get(vertex.getId()).forEach(edgeId->{
+                    Edge edge = graph.edgeMap.get(edgeId);
+                    //справшиваю есть ли такая точка в очереди точек
+                    Vertex otherEdgeSide = graph.vertexMap.get(graph.edgeMap.get(edgeId).getOtherNode(vertex.getId()));
+                    double currentDist = otherEdgeSide.getDistFromStart();
+                    double newDist = vertex.getDistFromStart()+graph.edgeMap.get(edgeId).getWeight();
+                    if(!vertexQueue.contains(otherEdgeSide)){
+                        //проверяю является ли расстояние в расмотриваемой точке больше чем в предыдущей точке + вес ребра между ними
+                        if(currentDist>newDist){
+                            vertexQueue.add(otherEdgeSide);
+                            otherEdgeSide.setDistFromStart(newDist);
+                            otherEdgeSide.setPrevVertex(vertex);
+                        }
+                    } else { //если такая точка уже есть в очереди
+
+                        if(currentDist>newDist){
+                            otherEdgeSide.setPrevVertex(vertex);
+                            otherEdgeSide.setDistFromStart(newDist);
+                        }
+                    }
+                });
             }
-            else{
-                //добавляем вершины в список посещенных
-                visitedVertexes.add(id);
-                graph.vertexMap.get(id).setPrevVertex(start);
-                graph.vertexMap.get(id).setDistFromStart(start.getDistFromStart() + graph.edgeMap.get(e).getWeight());
-                CheckVertexes(graph,graph.vertexMap.get(id));
-            }
-        });
+        }
+    }
+    public List<Vertex> getVertexPath(Vertex finish){
+        List<Vertex> path = new ArrayList<>();
+        getPrevVertexes(finish,path);
+        return path;
+    }
+    private Vertex getPrevVertexes(Vertex vertex, List<Vertex> path) {
+        if (vertex.getPrevVertex() != null) {
+            path.add(vertex.getPrevVertex());
+            getPrevVertexes(vertex.getPrevVertex(), path);
+        }
+        return null;
     }
     public Vertex FindClosestVertex(Graph graph, double lan, double lon){
         return null;

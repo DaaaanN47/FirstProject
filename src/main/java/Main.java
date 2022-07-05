@@ -3,10 +3,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 //
 public class Main {
@@ -24,7 +21,7 @@ public class Main {
 //        double lon  = System.in.read();
 //        CoordinatesTree root = new CoordinatesTree(4,topRightLat,topRightLon,botLeftLat,botLeftLon);
         CoordinatesTree root = new
-                CoordinatesTree(5, 55.6874224,52.3233298, 55.7774766,52.429723);
+                CoordinatesTree(4, 55.6874224,52.3233298, 55.7774766,52.429723);
         OsmParser osmParser = new OsmParser();
         Document document = osmParser.getDocument();
 
@@ -72,27 +69,47 @@ public class Main {
 //        double startLat  = in.nextDouble();
 //        System.out.println("Долгота стартовой точки: ");
 //        double startLon  = in.nextDouble();
-        Vertex start = new Vertex( 557530261,524101473);
-        Vertex finish = new Vertex( 55.7450844,523967016);
-        Set<Long> nearestvertexes = root.getNearestVertexes(start);
-        Set<Long> nearestvertexes1 = root.getNearestVertexes(finish);
-        if(nearestvertexes==null){
+        Vertex start = new Vertex( 55.7530261,52.4101473);
+        Vertex finish = new Vertex( 55.7450844,52.3967016);
+        Set<Long> nearestVertexes = root.getNearestVertexes(start);
+        Set<Long> nearestVertexes1 = root.getNearestVertexes(finish);
+        if(nearestVertexes==null){
             System.out.println("Точка вне рассматриваемой зоны");
         }
+
         HashMap<Long,Vertex> nearStartvertex = new HashMap<>();
-        nearestvertexes.stream().forEach(e->{
+        nearestVertexes.stream().forEach(e->{
             nearStartvertex.put(e,graph.vertexMap.get(e));
         });
         HashMap<Long,Vertex> nearFinishtvertex = new HashMap<>();
-        nearestvertexes1.stream().forEach(e->{
+        nearestVertexes1.stream().forEach(e->{
             nearFinishtvertex.put(e,graph.vertexMap.get(e));
         });
         Vertex startVertex  = graph.getClosestVertex(nearStartvertex,start);
         Vertex finVertex  = graph.getClosestVertex(nearFinishtvertex,finish);
-//        DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
-//        dijkstraAlgorithm.setInfDistToVertexes(graph,startVertex);
-//        dijkstraAlgorithm.CheckVertexes(graph,startVertex);
-        System.out.println(finVertex.getDistFromStart());
+
+        DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
+        dijkstraAlgorithm.setInfDistToVertexes(graph,startVertex);
+        graph.vertexMap.entrySet().forEach(e->{
+            if(e.getValue().getId()==510188427){
+                Vertex test1 = graph.vertexMap.get(e.getValue().getId());
+                System.out.println(test1.getLat() + "  " + test1.getLon());
+            }
+            if(e.getValue().getId()==571103275){
+                Vertex test1 = graph.vertexMap.get(e.getValue().getId());
+                System.out.println(test1.getLat() + "  " + test1.getLon());
+            }
+            if(e.getValue().getId()==2075688508){
+                Vertex test1 = graph.vertexMap.get(e.getValue().getId());
+                System.out.println(test1.getLat() + "  " + test1.getLon());
+            }
+        });
+
+
+
+        dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
+       ArrayList<Vertex> path = (ArrayList<Vertex>) dijkstraAlgorithm.getVertexPath(finVertex);
+        System.out.println(System.currentTimeMillis());
         System.out.println("Madina privet");
     }
 }
