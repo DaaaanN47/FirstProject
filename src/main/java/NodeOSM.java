@@ -11,15 +11,16 @@ public class NodeOSM {
         return isCrossRoad;
     }
 
-    public void setIsCrossRoad(boolean crossRoad, long id) {
-        isCrossRoad = crossRoad;
-        waysHasNode.add(id);
+    public void setIsCrossRoad(){
+        isCrossRoad=true;
     }
 
     Set<Long> linkedNodes = new HashSet<>();
 
-    public NodeOSM(long id) {
+    public NodeOSM(long id, double lat, double lon) {
         setId(id);
+        setLat(lat);
+        setLon(lon);
     }
 
     public long getId() {

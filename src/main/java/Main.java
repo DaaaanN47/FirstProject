@@ -31,8 +31,8 @@ public class Main {
         Node node = document.getFirstChild();
         NodeList nodeList = node.getChildNodes();
 
-        int nodeListLenngth = nodeList.getLength();
-        for (int i = 0; i < nodeListLenngth; i++) {
+        int nodeListLength = nodeList.getLength();
+        for (int i = 0; i < nodeListLength; i++) {
             if(!nodeList.item(i).getNodeName().equals("way")){
                 continue;
             } else if (nodeList.item(i).getNodeName().equals("relation")) {
@@ -40,15 +40,16 @@ public class Main {
             }
             osmParser.CheckWayParams(nodeList.item(i));
         }
+        System.out.println(System.currentTimeMillis() + " ways done");
+        osmParser.getAllNodeObjects(nodeList);
+//        for (int i = 0; i < nodeListLength; i++) {
+//            if(nodeList.item(i).getNodeName().equals("node")){
+//                osmParser.GetNode(nodeList.item(i));
+//            } else if (nodeList.item(i).getNodeName().equals("way")) {
+//                break;
+//            }
+//        }
 
-        System.out.println("ways done");
-        for (int i = 0; i < nodeListLenngth; i++) {
-            if(nodeList.item(i).getNodeName().equals("node")){
-                osmParser.GetNode(nodeList.item(i));
-            } else if (nodeList.item(i).getNodeName().equals("way")) {
-                break;
-            }
-        }
         System.out.println(System.currentTimeMillis() + " nodes done" );
         graph.wayMap.entrySet().stream().forEach(e->{
             graph.getEdgesFromWay(e.getValue());
@@ -73,8 +74,8 @@ public class Main {
         Vertex finish = new Vertex( 55.7450844,52.3967016);
         Set<Long> nearestVertexes = root.getNearestVertexes(start);
         Set<Long> nearestVertexes1 = root.getNearestVertexes(finish);
-        if(nearestVertexes==null){
-            System.out.println("Точка вне рассматриваемой зоны");
+        if(nearestVertexes.size()==0 || nearestVertexes1.size()==0){
+            System.out.println("Точка вне рассматриваемой зоны или произошла ошибка");
         }
 
         HashMap<Long,Vertex> nearStartvertex = new HashMap<>();
@@ -104,9 +105,6 @@ public class Main {
                 System.out.println(test1.getLat() + "  " + test1.getLon());
             }
         });
-
-
-
         dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
        ArrayList<Vertex> path = (ArrayList<Vertex>) dijkstraAlgorithm.getVertexPath(finVertex);
         System.out.println(System.currentTimeMillis());

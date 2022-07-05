@@ -4,8 +4,14 @@ public class WayOSM {
     private long id;
     List<Long> refs = new ArrayList<>();
 
+    public List<Long> getRefs() {
+        return refs;
+    }
 
-    
+    public void setRefs(List<Long> refs) {
+        this.refs = refs;
+    }
+
     public long getId() {
         return id;
     }

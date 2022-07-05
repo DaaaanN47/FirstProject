@@ -9,12 +9,13 @@ public class Graph {
     double distance;
     Long vertexId;
 
-    public long getVertexId() {
-        return vertexId;
+
+    public Map<Long, WayOSM> getWayMap() {
+        return wayMap;
     }
 
-    public void setVertexId(long vertexId) {
-        this.vertexId = vertexId;
+    public Map<Long, NodeOSM> getNodeMap() {
+        return nodeMap;
     }
 
     Map<Long, WayOSM> wayMap = new HashMap<>();
@@ -30,6 +31,22 @@ public class Graph {
 
     Map<Long,Edge> edgeMap = new HashMap<>();
 
+    public Set<Long> getAllNodesIds() {
+        return allNodesIds;
+    }
+
+    public void setAllNodesId(Set<Long> allNodes) {
+        this.allNodesIds = allNodes;
+    }
+
+    Set<Long> allNodesIds = new HashSet<>();
+    public long getVertexId() {
+        return vertexId;
+    }
+
+    public void setVertexId(long vertexId) {
+        this.vertexId = vertexId;
+    }
     public double getDistance() {
         return distance;
     }
@@ -133,8 +150,9 @@ public class Graph {
     public Vertex getClosestVertex(HashMap<Long,Vertex> vertexMap, Vertex vertex){
         setDistance(Double.MAX_VALUE);
         vertexMap.forEach((key, value) -> {
-            if (getDistance() > CalculateDistance(vertex.getLat(), vertex.getLon(), value.getLat(), value.getLon())) {
-                setDistance(CalculateDistance(vertex.getLat(), vertex.getLon(), value.getLat(), value.getLon()));
+            double newDist = CalculateDistance(vertex.getLat(), vertex.getLon(), value.getLat(), value.getLon());
+            if (getDistance() > newDist ) {
+                setDistance(newDist);
                 setVertexId(value.getId());
             }
         });
