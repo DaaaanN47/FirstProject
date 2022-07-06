@@ -1,16 +1,14 @@
-import java.awt.print.Printable;
 import java.util.*;
 
 public class DijkstraAlgorithm {
 
     Queue<Vertex> vertexQueue = new PriorityQueue<>();
-    private List<Long> visitedVertexes = new ArrayList<>();
     public void setInfDistToVertexes(Graph graph, Vertex start){
-        graph.getVertexMap().entrySet().forEach(e->{
-            if(e.getValue().equals(start)){
-                e.getValue().setDistFromStart(0);
+        graph.getVertexMap().forEach((key, value) -> {
+            if (value.equals(start)) {
+                value.setDistFromStart(0);
             } else {
-                e.getValue().setDistFromStart(Double.MAX_VALUE);
+                value.setDistFromStart(Double.MAX_VALUE);
             }
         });
     }
@@ -25,15 +23,15 @@ public class DijkstraAlgorithm {
         //остановкой цикла будет то, что расстояние записанное в рассмотримаемой вершине из очереди будет больше чем расстояние в объекте финиша.
         while(true){
             Vertex vertex = vertexQueue.poll();
-            if(vertex.getDistFromStart()>finish.getDistFromStart()){
+            if(vertex.getDistFromStart() > finish.getDistFromStart()){
                 break;
             }else {
                 graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
                     Edge edge = graph.edgeMap.get(edgeId);
                     //справшиваю есть ли такая точка в очереди точек
-                    Vertex otherEdgeSide = graph.getVertexMap().get(graph.edgeMap.get(edgeId).getOtherNode(vertex.getId()));
+                    Vertex otherEdgeSide = graph.getVertexMap().get(edge.getOtherNode(vertex.getId()));
                     double currentDist = otherEdgeSide.getDistFromStart();
-                    double newDist = vertex.getDistFromStart()+graph.edgeMap.get(edgeId).getWeight();
+                    double newDist = vertex.getDistFromStart() + edge.getWeight();
                     if(!vertexQueue.contains(otherEdgeSide)){
                         //проверяю является ли расстояние в расмотриваемой точке больше чем в предыдущей точке + вес ребра между ними
                         if(currentDist>newDist){
@@ -57,12 +55,11 @@ public class DijkstraAlgorithm {
         getPrevVertexes(finish,path);
         return path;
     }
-    private Vertex getPrevVertexes(Vertex vertex, List<Vertex> path) {
+    private void getPrevVertexes(Vertex vertex, List<Vertex> path) {
         if (vertex.getPrevVertex() != null) {
             path.add(vertex.getPrevVertex());
             getPrevVertexes(vertex.getPrevVertex(), path);
         }
-        return null;
     }
      public void printPath(ArrayList<Vertex> vertices){
         vertices.forEach(e->{

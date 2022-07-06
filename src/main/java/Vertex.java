@@ -1,4 +1,3 @@
-import java.util.Comparator;
 
 public class Vertex implements Comparable<Vertex> {
     private long id;

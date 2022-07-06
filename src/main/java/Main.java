@@ -18,8 +18,6 @@ public class Main {
 
         Node node = document.getFirstChild();
         NodeList nodeList = node.getChildNodes();
-        Node node1 = document.getFirstChild();
-        NodeList nodeList1 = node1.getChildNodes();
 
         osmParser.CheckWays(nodeList);
         CoordinatesTree root = new CoordinatesTree(nodeList,4);
@@ -28,9 +26,7 @@ public class Main {
         osmParser.getAllNodeObjects(nodeList);
 
         System.out.println(System.currentTimeMillis() + " nodes done" );
-        graph.getWayMap().entrySet().stream().forEach(e->{
-            graph.getEdgesFromWay(e.getValue());
-        });
+        graph.getWayMap().forEach((key, value) -> graph.getEdgesFromWay(value));
         System.out.println(System.currentTimeMillis() + " edges done" );
         graph.fillVertexAndEdgesMap();
 
@@ -53,11 +49,11 @@ public class Main {
         }
 
         HashMap<Long,Vertex> nearStartvertex = new HashMap<>();
-        nearestVertexes.stream().forEach(e->{
+        nearestVertexes.forEach(e->{
             nearStartvertex.put(e,graph.getVertexMap().get(e));
         });
         HashMap<Long,Vertex> nearFinishtvertex = new HashMap<>();
-        nearestVertexes1.stream().forEach(e->{
+        nearestVertexes1.forEach(e->{
             nearFinishtvertex.put(e,graph.getVertexMap().get(e));
         });
         Vertex startVertex  = graph.getClosestVertex(nearStartvertex,start);

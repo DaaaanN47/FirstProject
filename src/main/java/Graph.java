@@ -38,11 +38,6 @@ public class Graph {
     public Set<Long> getAllNodesIds() {
         return allNodesIds;
     }
-
-    public void setAllNodesId(Set<Long> allNodes) {
-        this.allNodesIds = allNodes;
-    }
-
     Set<Long> allNodesIds = new HashSet<>();
     public long getVertexId() {
         return vertexId;
@@ -118,14 +113,13 @@ public class Graph {
     }
 
     public void getEdgeWeights(){
-        double weight=0;
         edges.forEach(e->{
            calculateWeight(e);
         });
     }
 
     public void ConvertEdgeSetIntoHashMap(){
-        edges.stream().forEach(e->{
+        edges.forEach(e->{
             edgeMap.put(e.getId(),e);
         });
     }
@@ -165,7 +159,6 @@ public class Graph {
                 setVertexId(value.getId());
             }
         });
-        Vertex vertex1 = vertexMap.get(getVertexId());
-        return vertex1 ;
+        return vertexMap.get(getVertexId());
     }
 }

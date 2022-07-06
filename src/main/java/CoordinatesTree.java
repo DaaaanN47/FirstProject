@@ -1,5 +1,4 @@
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.*;
@@ -10,40 +9,17 @@ public class CoordinatesTree {
     private final double avgLon;
     int currentLevel;
     int maxLevel;
-    private double minLat;
-    private double minLon;
-    private double maxLat;
-    private double maxLon;
+    private final double minLat;
+    private final double minLon;
+    private final double maxLat;
+    private final double maxLon;
 
     private List<CoordinatesTree> children = new ArrayList<>();
     private Set<Long> containedVertexes = new HashSet<>();
 
     //конструктор для корневого элемента
-    public CoordinatesTree(int maxLevel, double minLat, double minLon, double maxLat, double maxLon){
-        this.maxLevel = maxLevel;
-        this.minLat = minLat;
-        this.minLon = minLon;
-        this.maxLat = maxLat;
-        this.maxLon = maxLon;
-        this.currentLevel = 1;
-        avgLat = (maxLat + minLat) / 2;
-        avgLon = (maxLon + minLon) / 2;
-        this.createChildren();
-    }
-    public CoordinatesTree(Node node, int maxLevel){
-        if(!node.getNodeName().equals("bounds")){
-            System.out.println("не то");
-        }
-        NamedNodeMap attributes = node.getAttributes();
-        this.minLat = Double.parseDouble(attributes.getNamedItem("minlat").getNodeValue());
-        this.minLon = Double.parseDouble(attributes.getNamedItem("minlon").getNodeValue());
-        this.maxLat = Double.parseDouble(attributes.getNamedItem("maxlat").getNodeValue());
-        this.maxLon = Double.parseDouble(attributes.getNamedItem("maxlon").getNodeValue());
-        avgLat = (maxLat + minLat) / 2;
-        avgLon = (maxLon + minLon) / 2;
-        this.createChildren();
-    }
     public CoordinatesTree(NodeList nodeList, int maxLevel){
+        this.maxLevel=maxLevel;
         NamedNodeMap attributes = nodeList.item(1).getAttributes();
         this.minLat = Double.parseDouble(attributes.getNamedItem("minlat").getNodeValue());
         this.minLon = Double.parseDouble(attributes.getNamedItem("minlon").getNodeValue());
@@ -89,13 +65,6 @@ public class CoordinatesTree {
         } else {
             containedVertexes.add(vertex.getId());
         }
-    }
-    private Set<Long> getVertexesFromParent() {
-        Set<Long> vertexSet = children.get(0).containedVertexes;
-        vertexSet.addAll(children.get(1).containedVertexes);
-        vertexSet.addAll(children.get(2).containedVertexes);
-        vertexSet.addAll(children.get(3).containedVertexes);
-        return vertexSet;
     }
      public Set<Long> getNearestVertexes(Vertex vertex){
          if(currentLevel<maxLevel){

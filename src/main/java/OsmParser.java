@@ -7,7 +7,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,7 +66,6 @@ public class OsmParser {
                     }
                     break;
                 }
-                continue;
             }
         }
     }
@@ -104,40 +102,11 @@ public class OsmParser {
                                 Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()),
                                 Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
                         graph.getNodeMap().put(nodeOSM.getId(), nodeOSM);
-//                        graph.getWayMap().entrySet().forEach(e->{
-//                            if (e.getValue().refs.get(0) == nodeId || e.getValue().refs.get(e.getValue().refs.size() - 1) == nodeId) {
-//                                graph.nodeMap.get(nodeId).setIsCrossRoad();
-//                            }
-//                        });
                 }
             }
         }
         setCrossRoad();
         checkRepeatNodes();
-    }
-    public void GetNode(Node node) {
-        NamedNodeMap attributes = node.getAttributes();
-        long nodeId = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
-
-        graph.getWayMap().forEach((key, value) -> {
-            long wayId = key;
-            boolean isContain = value.getRefs().contains(nodeId);
-            if (isContain) {
-                if (graph.getNodeMap().containsKey(nodeId)) {
-                    graph.getNodeMap().get(nodeId).setIsCrossRoad();
-                    //graph.nodeMap.get(nodeId).waysHasNode.add(wayId);
-                } else {
-                    NodeOSM nodeOSM = new NodeOSM(nodeId,
-                            Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()),
-                            Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-                    nodeOSM.waysHasNode.add(key);
-                    graph.getNodeMap().put(nodeOSM.getId(), nodeOSM);
-                    if (value.getRefs().get(0) == nodeId || value.getRefs().get(value.getRefs().size() - 1) == nodeId) {
-                            graph.getNodeMap().get(nodeId).setIsCrossRoad();
-                    }
-                }
-            }
-        });
     }
     private void setCrossRoad(){
         graph.getWayMap().forEach((key, value) ->{
