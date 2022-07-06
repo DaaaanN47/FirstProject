@@ -38,8 +38,8 @@ public class Main {
 
         graph.ConvertEdgeSetIntoHashMap();
 
-        Vertex start = new Vertex( 55.7727061,52.4349619);
-        Vertex finish = new Vertex( 55.7500913,52.4219714);
+        Vertex start = new Vertex( Double.parseDouble(args[0]), Double.parseDouble(args[1]));
+        Vertex finish = new Vertex( Double.parseDouble(args[2]), Double.parseDouble(args[3]));
 
         Set<Long> nearestVertexes = root.getNearestVertexes(start);
         Set<Long> nearestVertexes1 = root.getNearestVertexes(finish);

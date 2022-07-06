@@ -28,9 +28,9 @@ public class OsmParser {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         graph = new Graph();
-        //String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
+        String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
         ///home/kochnev_a/projects/untitled/src/NAB-CH.osm
-        return builder.parse("/home/kochnev_a/projects/untitled/src/NAB-CH.osm");
+        return builder.parse(dir);
     }
     public void CheckWays(NodeList nodeList){
         int nodeListLength = nodeList.getLength();

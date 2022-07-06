@@ -5,13 +5,18 @@ public class Vertex implements Comparable<Vertex> {
     private double lon;
     private Vertex prevVertex;
     private double distFromStart;
+    private int maxSpeed;
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
 
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+    private String coordinatanesStr;
     public String getCoordinatanesStr() {
         return coordinatanesStr;
     }
-
-    private String coordinatanesStr;
-
     public double getDistFromStart() {
         return distFromStart;
     }
