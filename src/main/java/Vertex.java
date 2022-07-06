@@ -6,6 +6,11 @@ public class Vertex implements Comparable<Vertex> {
     private double lon;
     private Vertex prevVertex;
     private double distFromStart;
+
+    public String getCoordinatanesStr() {
+        return coordinatanesStr;
+    }
+
     private String coordinatanesStr;
 
     public double getDistFromStart() {

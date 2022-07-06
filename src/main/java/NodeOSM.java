@@ -15,8 +15,6 @@ public class NodeOSM {
         isCrossRoad=true;
     }
 
-    Set<Long> linkedNodes = new HashSet<>();
-
     public NodeOSM(long id, double lat, double lon) {
         setId(id);
         setLat(lat);

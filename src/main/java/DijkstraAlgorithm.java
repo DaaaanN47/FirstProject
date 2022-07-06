@@ -1,3 +1,4 @@
+import java.awt.print.Printable;
 import java.util.*;
 
 public class DijkstraAlgorithm {
@@ -5,7 +6,7 @@ public class DijkstraAlgorithm {
     Queue<Vertex> vertexQueue = new PriorityQueue<>();
     private List<Long> visitedVertexes = new ArrayList<>();
     public void setInfDistToVertexes(Graph graph, Vertex start){
-        graph.vertexMap.entrySet().forEach(e->{
+        graph.getVertexMap().entrySet().forEach(e->{
             if(e.getValue().equals(start)){
                 e.getValue().setDistFromStart(0);
             } else {
@@ -27,10 +28,10 @@ public class DijkstraAlgorithm {
             if(vertex.getDistFromStart()>finish.getDistFromStart()){
                 break;
             }else {
-                graph.vertexesAndItsEdges.get(vertex.getId()).forEach(edgeId->{
+                graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
                     Edge edge = graph.edgeMap.get(edgeId);
                     //справшиваю есть ли такая точка в очереди точек
-                    Vertex otherEdgeSide = graph.vertexMap.get(graph.edgeMap.get(edgeId).getOtherNode(vertex.getId()));
+                    Vertex otherEdgeSide = graph.getVertexMap().get(graph.edgeMap.get(edgeId).getOtherNode(vertex.getId()));
                     double currentDist = otherEdgeSide.getDistFromStart();
                     double newDist = vertex.getDistFromStart()+graph.edgeMap.get(edgeId).getWeight();
                     if(!vertexQueue.contains(otherEdgeSide)){
@@ -63,7 +64,9 @@ public class DijkstraAlgorithm {
         }
         return null;
     }
-    public Vertex FindClosestVertex(Graph graph, double lan, double lon){
-        return null;
-    }
+     public void printPath(ArrayList<Vertex> vertices){
+        vertices.forEach(e->{
+            System.out.println(e.getCoordinatanesStr() + ", " );
+        });
+     }
 }

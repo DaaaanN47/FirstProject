@@ -18,19 +18,23 @@ public class Graph {
         return nodeMap;
     }
 
-    Map<Long, WayOSM> wayMap = new HashMap<>();
-    Map<Long, NodeOSM> nodeMap = new HashMap<>();
-
-    Set<Edge> edges = new HashSet<>();
+    private Map<Long, WayOSM> wayMap = new HashMap<>();
+    private Map<Long, NodeOSM> nodeMap = new HashMap<>();
+    private Set<Edge> edges = new HashSet<>();
 
     //хранит в себе все перектерски(вершины)
-    Map<Long, Vertex> vertexMap = new HashMap<>();
+    private Map<Long, Vertex> vertexMap = new HashMap<>();
+
+    public Map<Long, List<Long>> getVertexesAndItsEdges() {
+        return vertexesAndItsEdges;
+    }
 
     //хранит в себе айдишки вершин и список прилегающих ребер
-    Map<Long, List<Long>> vertexesAndItsEdges = new HashMap<>();
-
+    private Map<Long, List<Long>> vertexesAndItsEdges = new HashMap<>();
     Map<Long,Edge> edgeMap = new HashMap<>();
-
+    public Map<Long, Vertex> getVertexMap() {
+        return vertexMap;
+    }
     public Set<Long> getAllNodesIds() {
         return allNodesIds;
     }
@@ -67,6 +71,7 @@ public class Graph {
             root.addVertex(vertex);
         });
     }
+
     //Получаем мапу <айди вершины, список ребер>, если при пробеге по ребрам мы встречаем точку, которую уже ранее создавали,
     // то просто добавляем к списку ребер текущее и идем дальше
     public void fillVertexAndEdgesMap(){
@@ -82,8 +87,8 @@ public class Graph {
 
     public int getCrossRoadRefsCount(WayOSM wayOSM){
         int cRCount=0;
-        for(int i = 0; i<wayOSM.refs.size(); i++) {
-            if(nodeMap.get(wayOSM.refs.get(i)).isCrossRoad()){
+        for(int i = 0; i<wayOSM.getRefs().size(); i++) {
+            if(nodeMap.get(wayOSM.getRefs().get(i)).isCrossRoad()){
                 cRCount++;
             }
         }
@@ -92,15 +97,15 @@ public class Graph {
 
     public void getEdgesFromWay(WayOSM wayOSM){
         //поле для хранения айдишки точки чтобы знать предыдущую точку конца ребра при находжении следующей вершины.
-        ChangeIntermediateNodeId(nodeMap.get(wayOSM.refs.get(0)).getId());
+        ChangeIntermediateNodeId(nodeMap.get(wayOSM.getRefs().get(0)).getId());
         if(getCrossRoadRefsCount(wayOSM)==2){
-            Edge edge = new Edge(edgeId,nodeId,nodeMap.get(wayOSM.refs.get(wayOSM.refs.size()-1)).getId());
+            Edge edge = new Edge(edgeId,nodeId,nodeMap.get(wayOSM.getRefs().get(wayOSM.getRefs().size()-1)).getId());
             edgeId++;
             edges.add(edge);
             edge.setNodesInEdge(wayOSM);
         }
         else {
-            wayOSM.refs.stream().skip(1).forEach(e->{
+            wayOSM.getRefs().stream().skip(1).forEach(e->{
                 if(nodeMap.get(e).isCrossRoad()){
                     Edge edge = new Edge(edgeId,nodeId,nodeMap.get(e).getId());
                     edgeId++;
@@ -111,17 +116,20 @@ public class Graph {
             });
         }
     }
+
     public void getEdgeWeights(){
         double weight=0;
         edges.forEach(e->{
            calculateWeight(e);
         });
     }
+
     public void ConvertEdgeSetIntoHashMap(){
         edges.stream().forEach(e->{
             edgeMap.put(e.getId(),e);
         });
     }
+
     private void calculateWeight(Edge edge) {
     double weight=0;
         NodeOSM node = nodeMap.get(edge.getStartVertexId());
@@ -131,6 +139,7 @@ public class Graph {
         }
         edge.setWeight(weight);
     }
+
     private double CalculateDistance(double strLat, double strLon, double finLat, double finLon){
         double radius = 6378137;
         double degreeConvert = Math.PI/180;

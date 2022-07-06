@@ -19,6 +19,8 @@ public class OsmParser {
 
     public Graph graph;
 
+    private int counter;
+
     private static final Set<String> roadTypes = Stream.of("trunk", "primary","secondary",
             "tertiary", "unclassified", "residential", "motorway_link","trunk_link","primary_link",
             "secondary_link","tertiary_link","living_street","service","track","road").collect(Collectors.toSet());
@@ -31,8 +33,18 @@ public class OsmParser {
         ///home/kochnev_a/projects/untitled/src/NAB-CH.osm
         return builder.parse("/home/kochnev_a/projects/untitled/src/NAB-CH.osm");
     }
-
-    public void CheckWayParams(Node way){
+    public void CheckWays(NodeList nodeList){
+        int nodeListLength = nodeList.getLength();
+        for (int i = 0; i < nodeListLength; i++) {
+            if(!nodeList.item(i).getNodeName().equals("way")){
+                continue;
+            } else if (nodeList.item(i).getNodeName().equals("relation")) {
+                break;
+            }
+            CheckWayParams(nodeList.item(i));
+        }
+    }
+    private void CheckWayParams(Node way){
         NamedNodeMap attributes = way.getAttributes();
         NodeList tagList = way.getChildNodes();
         int tagListLength = tagList.getLength()-1;
@@ -71,10 +83,10 @@ public class OsmParser {
             if(refNode.getNodeName().equals("nd")){
                 String ref =  refAttributes.getNamedItem("ref").getNodeValue();
                 graph.getAllNodesIds().add(Long.parseLong(ref));
-                wayOsm.refs.add(Long.parseLong(ref));
+                wayOsm.getRefs().add(Long.parseLong(ref));
             }
             else{
-                graph.wayMap.put(wayOsm.getId(), wayOsm);
+                graph.getWayMap().put(wayOsm.getId(), wayOsm);
                 break;
             }
         }
@@ -88,60 +100,71 @@ public class OsmParser {
                 long nodeId = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
                 boolean isContain = graph.getAllNodesIds().contains(nodeId);
                 if (isContain) {
-                    if (graph.nodeMap.containsKey(nodeId)) {
-                        graph.nodeMap.get(nodeId).setIsCrossRoad();
-                    } else {
                         NodeOSM nodeOSM = new NodeOSM(nodeId,
                                 Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()),
                                 Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
-                        graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
+                        graph.getNodeMap().put(nodeOSM.getId(), nodeOSM);
 //                        graph.getWayMap().entrySet().forEach(e->{
 //                            if (e.getValue().refs.get(0) == nodeId || e.getValue().refs.get(e.getValue().refs.size() - 1) == nodeId) {
 //                                graph.nodeMap.get(nodeId).setIsCrossRoad();
 //                            }
 //                        });
-                    }
                 }
             }
         }
         setCrossRoad();
+        checkRepeatNodes();
     }
     public void GetNode(Node node) {
         NamedNodeMap attributes = node.getAttributes();
         long nodeId = Long.parseLong(attributes.getNamedItem("id").getNodeValue());
 
-        graph.wayMap.forEach((key, value) -> {
+        graph.getWayMap().forEach((key, value) -> {
             long wayId = key;
-            boolean isContain = value.refs.contains(nodeId);
+            boolean isContain = value.getRefs().contains(nodeId);
             if (isContain) {
-                if (graph.nodeMap.containsKey(nodeId)) {
-                    graph.nodeMap.get(nodeId).setIsCrossRoad();
+                if (graph.getNodeMap().containsKey(nodeId)) {
+                    graph.getNodeMap().get(nodeId).setIsCrossRoad();
                     //graph.nodeMap.get(nodeId).waysHasNode.add(wayId);
                 } else {
                     NodeOSM nodeOSM = new NodeOSM(nodeId,
                             Double.parseDouble(attributes.getNamedItem("lat").getNodeValue()),
                             Double.parseDouble(attributes.getNamedItem("lon").getNodeValue()));
                     nodeOSM.waysHasNode.add(key);
-                    graph.nodeMap.put(nodeOSM.getId(), nodeOSM);
-                    if (value.refs.get(0) == nodeId || value.refs.get(value.refs.size() - 1) == nodeId) {
-                            graph.nodeMap.get(nodeId).setIsCrossRoad();
+                    graph.getNodeMap().put(nodeOSM.getId(), nodeOSM);
+                    if (value.getRefs().get(0) == nodeId || value.getRefs().get(value.getRefs().size() - 1) == nodeId) {
+                            graph.getNodeMap().get(nodeId).setIsCrossRoad();
                     }
                 }
             }
         });
     }
     private void setCrossRoad(){
-        graph.wayMap.forEach((key, value) ->{
-            long startIndex = value.refs.get(0);
-            long finishIndex = value.refs.get(value.refs.size() - 1);
-            if (graph.nodeMap.containsKey(startIndex)){
-                graph.nodeMap.get(startIndex).setIsCrossRoad();
+        graph.getWayMap().forEach((key, value) ->{
+            long startIndex = value.getRefs().get(0);
+            long finishIndex = value.getRefs().get(value.getRefs().size() - 1);
+            if (graph.getNodeMap().containsKey(startIndex)){
+                graph.getNodeMap().get(startIndex).setIsCrossRoad();
             }
-            if(graph.nodeMap.containsKey(finishIndex)) {
-                graph.nodeMap.get(finishIndex).setIsCrossRoad();
+            if(graph.getNodeMap().containsKey(finishIndex)) {
+                graph.getNodeMap().get(finishIndex).setIsCrossRoad();
             }
         });
     }
-
+    private void checkRepeatNodes(){
+        graph.getAllNodesIds().forEach(nodeId->{
+            long currentId= nodeId;
+            counter = 0;
+            for (WayOSM wayOSM: graph.getWayMap().values()){
+                if(wayOSM.getRefs().contains(nodeId)){
+                    counter++;
+                }
+                if(counter>1){
+                    graph.getNodeMap().get(currentId).setIsCrossRoad();
+                    break;
+                }
+            }
+        });
+    }
 }
 //

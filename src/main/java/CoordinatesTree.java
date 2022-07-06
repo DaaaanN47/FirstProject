@@ -1,3 +1,7 @@
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.util.*;
 
 public class CoordinatesTree {
@@ -11,11 +15,8 @@ public class CoordinatesTree {
     private double maxLat;
     private double maxLon;
 
-
     private List<CoordinatesTree> children = new ArrayList<>();
     private Set<Long> containedVertexes = new HashSet<>();
-
-
 
     //конструктор для корневого элемента
     public CoordinatesTree(int maxLevel, double minLat, double minLon, double maxLat, double maxLon){
@@ -25,6 +26,29 @@ public class CoordinatesTree {
         this.maxLat = maxLat;
         this.maxLon = maxLon;
         this.currentLevel = 1;
+        avgLat = (maxLat + minLat) / 2;
+        avgLon = (maxLon + minLon) / 2;
+        this.createChildren();
+    }
+    public CoordinatesTree(Node node, int maxLevel){
+        if(!node.getNodeName().equals("bounds")){
+            System.out.println("не то");
+        }
+        NamedNodeMap attributes = node.getAttributes();
+        this.minLat = Double.parseDouble(attributes.getNamedItem("minlat").getNodeValue());
+        this.minLon = Double.parseDouble(attributes.getNamedItem("minlon").getNodeValue());
+        this.maxLat = Double.parseDouble(attributes.getNamedItem("maxlat").getNodeValue());
+        this.maxLon = Double.parseDouble(attributes.getNamedItem("maxlon").getNodeValue());
+        avgLat = (maxLat + minLat) / 2;
+        avgLon = (maxLon + minLon) / 2;
+        this.createChildren();
+    }
+    public CoordinatesTree(NodeList nodeList, int maxLevel){
+        NamedNodeMap attributes = nodeList.item(1).getAttributes();
+        this.minLat = Double.parseDouble(attributes.getNamedItem("minlat").getNodeValue());
+        this.minLon = Double.parseDouble(attributes.getNamedItem("minlon").getNodeValue());
+        this.maxLat = Double.parseDouble(attributes.getNamedItem("maxlat").getNodeValue());
+        this.maxLon = Double.parseDouble(attributes.getNamedItem("maxlon").getNodeValue());
         avgLat = (maxLat + minLat) / 2;
         avgLon = (maxLon + minLon) / 2;
         this.createChildren();

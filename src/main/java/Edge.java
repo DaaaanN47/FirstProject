@@ -5,7 +5,6 @@ public class Edge {
     private long id;
     private long startVertexId;
     private long finishvertexId;
-
     private double weight;
 
     public double getWeight() {
@@ -54,10 +53,10 @@ public class Edge {
         }
     }
     public void setNodesInEdge(WayOSM way){
-        int startNodeIndex = way.refs.indexOf(startVertexId);
-        int finishNodeIndex = way.refs.indexOf(finishvertexId);
+        int startNodeIndex = way.getRefs().indexOf(startVertexId);
+        int finishNodeIndex = way.getRefs().indexOf(finishvertexId);
         for(int i = startNodeIndex; i<finishNodeIndex+1; i++){
-                nodesBetweenVertexes.add(way.refs.get(i));
+                nodesBetweenVertexes.add(way.getRefs().get(i));
         }
     }
 
