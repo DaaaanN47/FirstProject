@@ -6,6 +6,7 @@ public class Vertex implements Comparable<Vertex> {
     private double lon;
     private Vertex prevVertex;
     private double distFromStart;
+    private String coordinatanesStr;
 
     public double getDistFromStart() {
         return distFromStart;
@@ -47,6 +48,7 @@ public class Vertex implements Comparable<Vertex> {
         setId(id);
         setLat(lat);
         setLon(lon);
+        coordinatanesStr= lat + "," + lon;
     }
     //конструктор для создания мнимой вершины из заданных пользователем координат
     public Vertex(double lat, double lon){

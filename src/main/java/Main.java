@@ -70,8 +70,8 @@ public class Main {
 //        double startLat  = in.nextDouble();
 //        System.out.println("Долгота стартовой точки: ");
 //        double startLon  = in.nextDouble();
-        Vertex start = new Vertex( 55.7530261,52.4101473);
-        Vertex finish = new Vertex( 55.7450844,52.3967016);
+        Vertex start = new Vertex( 55.7727061,52.4349619);
+        Vertex finish = new Vertex( 55.7500913,52.4219714);
         Set<Long> nearestVertexes = root.getNearestVertexes(start);
         Set<Long> nearestVertexes1 = root.getNearestVertexes(finish);
         if(nearestVertexes.size()==0 || nearestVertexes1.size()==0){
