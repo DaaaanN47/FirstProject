@@ -8,7 +8,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class OsmParser {
         properties.load(fileInputStream);
         roadAndSpeed = new HashMap<>();
         roadTypes.forEach(roadType->{
-            int speed = Integer.valueOf(properties.getProperty(roadType));
+            int speed = Integer.parseInt(properties.getProperty(roadType));
             roadAndSpeed.put(roadType, speed);
         });
     }
@@ -90,7 +89,6 @@ public class OsmParser {
                     }
                     break;
                 }
-                continue;
             }
         }
     }
@@ -168,9 +166,9 @@ public class OsmParser {
         });
     }
     private void setRoadsMaxSpeed(){
-        graph.getWayMap().entrySet().forEach(way->{
-            if(way.getValue().getMaxSpeed()==0){
-                way.getValue().setMaxSpeed(roadAndSpeed.get(way.getValue().getRoadType()));
+        graph.getWayMap().forEach((key, value) -> {
+            if (value.getMaxSpeed() == 0) {
+                value.setMaxSpeed(roadAndSpeed.get(value.getRoadType()));
             }
         });
     }

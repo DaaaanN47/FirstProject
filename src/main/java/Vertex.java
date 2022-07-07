@@ -20,10 +20,6 @@ public class Vertex implements Comparable<Vertex> {
     public double getDistWeightFromStart() {
         return distWeightFromStart;
     }
-
-    public void additionAllPathWeight(double dist){
-        distWeightFromStart = distWeightFromStart + dist;
-    }
     public void setDistWeightFromStart(double distWeightFromStart) {
         this.distWeightFromStart = distWeightFromStart;
     }

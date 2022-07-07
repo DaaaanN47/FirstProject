@@ -89,8 +89,8 @@ public class DijkstraAlgorithm {
             System.out.println("Расстояние: " + String.format("%.0f",finVertex.getEdgeWeightsFromStart()) + " м");
             System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()/1000)/60) + " мин если двигаться со скоростью 60 км/ч");
         } else {
-            System.out.println("Расстояние: " + String.format("%.0f",finVertex.getDistWeightFromStart()) + " м");
-            System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()) + " мин "));
+            System.out.println("Расстояние: " + String.format("%.2f",finVertex.getDistWeightFromStart()) + " м");
+            System.out.println("Потраченное время "+  String.format("%.2f",(finVertex.getEdgeWeightsFromStart()) + " мин "));
         }
      }
 }
