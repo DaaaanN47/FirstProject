@@ -25,7 +25,9 @@ public class OsmParser {
     Map<String, Integer> roadAndSpeed;
 
     private void fillRoadSpeedMap() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream("/home/kochnev_a/projects/untitled/src/main/resources/config.properties");
+        //E:\MaksimProject\src\main\resources\config.properties
+        ///home/kochnev_a/projects/untitled/src/main/resources/config.properties
+        FileInputStream fileInputStream = new FileInputStream("E:\\MaksimProject\\src\\main\\resources\\config.properties");
         Properties properties = new Properties();
         properties.load(fileInputStream);
         roadAndSpeed = new HashMap<>();
@@ -44,9 +46,9 @@ public class OsmParser {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         graph = new Graph();
-        //String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
+        String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
         ///home/kochnev_a/projects/untitled/src/NAB-CH.osm
-        return builder.parse("/home/kochnev_a/projects/untitled/src/NAB-CH.osm");
+        return builder.parse(dir);
     }
     public void CheckWays(NodeList nodeList, boolean fillSpeedMap) throws IOException {
 

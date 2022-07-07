@@ -114,7 +114,7 @@ public class Graph {
         }
     }
     //если тип веса = true, то вес ребра будет равнятся его длине, если false то вес ребра будет равен времени в пути(в минутах) с учетом типа дороги и разреешенной максимальной скорости
-    public void getEdgeWeights(Boolean weightType){
+    public void setEdgeWeights(Boolean weightType){
         if(weightType){
             edges.forEach(e->{
                 calculateEdgeLength(e);

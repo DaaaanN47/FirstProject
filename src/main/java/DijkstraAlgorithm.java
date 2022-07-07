@@ -48,20 +48,20 @@ public class DijkstraAlgorithm {
                     Vertex otherEdgeSide = graph.getVertexMap().get(edge.getOtherNode(vertex.getId()));
                     double currentWeight = otherEdgeSide.getEdgeWeightsFromStart();
                     double newWeight = vertex.getEdgeWeightsFromStart() + edge.getWeight();
-                    double edgeLength = edge.getLength();
+                    double edgeLength = vertex.getDistWeightFromStart() + edge.getLength();
                     if(!vertexQueue.contains(otherEdgeSide)){
                         //проверяю является ли расстояние в расмотриваемой точке больше чем в предыдущей точке + вес ребра между ними
                         if(currentWeight>newWeight){
                             vertexQueue.add(otherEdgeSide);
                             otherEdgeSide.setEdgeWeightsFromStart(newWeight);
                             otherEdgeSide.setPrevVertex(vertex);
-                            otherEdgeSide.additionAllPathWeight(vertex.getDistWeightFromStart());
+                            otherEdgeSide.setDistWeightFromStart(edgeLength);
                         }
                     } else { //если такая точка уже есть в очереди
                         if(currentWeight>newWeight){
                             otherEdgeSide.setPrevVertex(vertex);
                             otherEdgeSide.setEdgeWeightsFromStart(newWeight);
-                            otherEdgeSide.additionAllPathWeight(vertex.getDistWeightFromStart());
+                            otherEdgeSide.setDistWeightFromStart(edgeLength);
                         }
                     }
                 });
@@ -90,7 +90,7 @@ public class DijkstraAlgorithm {
             System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()/1000)/60) + " мин если двигаться со скоростью 60 км/ч");
         } else {
             System.out.println("Расстояние: " + String.format("%.0f",finVertex.getDistWeightFromStart()) + " м");
-            System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()) + " мин если двигаться со скоростью 60 км/ч"));
+            System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()) + " мин "));
         }
      }
 }

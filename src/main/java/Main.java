@@ -9,7 +9,7 @@ import java.util.*;
 public class Main {
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        //CoordinatesTree root = new CoordinatesTree(4, 55.6874224,52.3233298, 55.7774766,52.429723);
+        //55.7727061 52.4349619 55.7500913 52.4219714 false
         OsmParser osmParser = new OsmParser();
         Document document = osmParser.getDocument();
 
@@ -33,7 +33,7 @@ public class Main {
         graph.getVertexesFromEdges(root);
         System.out.println(System.currentTimeMillis() + " vertex done" );
 
-        graph.getEdgeWeights(Boolean.valueOf(args[4]));
+        graph.setEdgeWeights(Boolean.valueOf(args[4]));
         System.out.println(System.currentTimeMillis() + " weights done" );
 
         graph.ConvertEdgeSetIntoHashMap();
