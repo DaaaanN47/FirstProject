@@ -6,6 +6,24 @@ public class Edge {
     private long startVertexId;
     private long finishvertexId;
     private double weight;
+    private double length;
+
+    private int maxSpeed;
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public int getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
 
     public double getWeight() {
         return weight;

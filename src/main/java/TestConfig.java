@@ -5,15 +5,17 @@ import java.util.Properties;
 
 public class TestConfig {
     public static void main(String[] args) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream("E:\\MaksimProject\\src\\main\\resources\\config.properties");
+        ///home/kochnev_a/projects/untitled/src/main/resources/config.properties
+        //E:\MaksimProject\src\main\resources\config.properties
+        FileInputStream fileInputStream = new FileInputStream("/home/kochnev_a/projects/untitled/src/main/resources/config.properties");
 
         Properties properties = new Properties();
 
         properties.load(fileInputStream);
 
         String mot = "motorway";
-        String m = properties.getProperty(mot);
-        int motorway = Integer.parseInt(m);
+
+        int motorway = Integer.parseInt(properties.getProperty(mot));
         System.out.println(motorway);
     }
 }

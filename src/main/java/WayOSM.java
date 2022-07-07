@@ -4,6 +4,17 @@ public class WayOSM {
     private long id;
     private List<Long> refs = new ArrayList<>();
     private int maxSpeed;
+
+    private String roadType;
+
+    public String getRoadType() {
+        return roadType;
+    }
+
+    public void setRoadType(String roadType) {
+        this.roadType = roadType;
+    }
+
     public int getMaxSpeed() {
         return maxSpeed;
     }

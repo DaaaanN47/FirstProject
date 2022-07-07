@@ -7,6 +7,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,19 +22,34 @@ public class OsmParser {
 
     private int counter;
 
-    private static final Set<String> roadTypes = Stream.of("trunk", "primary","secondary",
-            "tertiary", "unclassified", "residential", "motorway_link","trunk_link","primary_link",
-            "secondary_link","tertiary_link","living_street","service","track","road").collect(Collectors.toSet());
+    Map<String, Integer> roadAndSpeed;
+
+    private void fillRoadSpeedMap() throws IOException {
+        FileInputStream fileInputStream = new FileInputStream("/home/kochnev_a/projects/untitled/src/main/resources/config.properties");
+        Properties properties = new Properties();
+        properties.load(fileInputStream);
+        roadAndSpeed = new HashMap<>();
+        roadTypes.forEach(roadType->{
+            int speed = Integer.valueOf(properties.getProperty(roadType));
+            roadAndSpeed.put(roadType, speed);
+        });
+    }
+
+
+    private static final Set<String> roadTypes = Stream.of("trunk","motorway", "primary", "secondary",
+            "tertiary", "unclassified", "residential", "motorway_link", "trunk_link", "primary_link",
+            "secondary_link", "tertiary_link", "living_street", "service", "track", "road").collect(Collectors.toSet());
 
     public  Document getDocument() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
         graph = new Graph();
-        String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
+        //String dir = System.getProperty("user.dir") + "\\src\\NAB-CH.osm";
         ///home/kochnev_a/projects/untitled/src/NAB-CH.osm
-        return builder.parse(dir);
+        return builder.parse("/home/kochnev_a/projects/untitled/src/NAB-CH.osm");
     }
-    public void CheckWays(NodeList nodeList){
+    public void CheckWays(NodeList nodeList, boolean fillSpeedMap) throws IOException {
+
         int nodeListLength = nodeList.getLength();
         for (int i = 0; i < nodeListLength; i++) {
             if(!nodeList.item(i).getNodeName().equals("way")){
@@ -42,6 +59,11 @@ public class OsmParser {
             }
             CheckWayParams(nodeList.item(i));
         }
+        if(!fillSpeedMap){
+            fillRoadSpeedMap();
+            setRoadsMaxSpeed();
+        }
+
     }
     private void CheckWayParams(Node way){
         NamedNodeMap attributes = way.getAttributes();
@@ -59,18 +81,20 @@ public class OsmParser {
                     String valStr = refAttributes.getNamedItem("v").getNodeValue();
                     boolean isAdded = roadTypes.add(valStr);
                     if(!isAdded){
-                        GetWay(attributes, tagList);
+                        GetWay(attributes, tagList, valStr);
                     }
                     else{
                         roadTypes.remove(valStr);
                     }
                     break;
                 }
+                continue;
             }
         }
     }
-    private void GetWay(NamedNodeMap atributes, NodeList tagList){
+    private void GetWay(NamedNodeMap atributes, NodeList tagList, String roadType){
         WayOSM wayOsm = new WayOSM(Long.parseLong(atributes.getNamedItem("id").getNodeValue()));
+        wayOsm.setRoadType(roadType);
         int tagListLength = tagList.getLength();
         for(int i =0 ; i<tagListLength; i++) {
             Node refNode = tagList.item(i);
@@ -83,11 +107,17 @@ public class OsmParser {
                 graph.getAllNodesIds().add(Long.parseLong(ref));
                 wayOsm.getRefs().add(Long.parseLong(ref));
             }
-            else{
-                graph.getWayMap().put(wayOsm.getId(), wayOsm);
-                break;
+            else if(refNode.getNodeName().equals("tag")){
+                String keyStr = refAttributes.getNamedItem("k").getNodeValue();
+                if(keyStr.equals("maxspeed")){
+                    String valStr = refAttributes.getNamedItem("v").getNodeValue();
+                    wayOsm.setMaxSpeed(Integer.parseInt(valStr));
+                    graph.getWayMap().put(wayOsm.getId(), wayOsm);
+                    break;
+                }
             }
         }
+        graph.getWayMap().put(wayOsm.getId(), wayOsm);
     }
     public void getAllNodeObjects(NodeList nodeList){
         int nodeListLength = nodeList.getLength();
@@ -135,5 +165,13 @@ public class OsmParser {
             }
         });
     }
+    private void setRoadsMaxSpeed(){
+        graph.getWayMap().entrySet().forEach(way->{
+            if(way.getValue().getMaxSpeed()==0){
+                way.getValue().setMaxSpeed(roadAndSpeed.get(way.getValue().getRoadType()));
+            }
+        });
+    }
+
 }
 //

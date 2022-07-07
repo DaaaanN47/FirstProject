@@ -95,6 +95,7 @@ public class Graph {
         ChangeIntermediateNodeId(nodeMap.get(wayOSM.getRefs().get(0)).getId());
         if(getCrossRoadRefsCount(wayOSM)==2){
             Edge edge = new Edge(edgeId,nodeId,nodeMap.get(wayOSM.getRefs().get(wayOSM.getRefs().size()-1)).getId());
+            edge.setMaxSpeed(wayOSM.getMaxSpeed());
             edgeId++;
             edges.add(edge);
             edge.setNodesInEdge(wayOSM);
@@ -103,6 +104,7 @@ public class Graph {
             wayOSM.getRefs().stream().skip(1).forEach(e->{
                 if(nodeMap.get(e).isCrossRoad()){
                     Edge edge = new Edge(edgeId,nodeId,nodeMap.get(e).getId());
+                    edge.setMaxSpeed(wayOSM.getMaxSpeed());
                     edgeId++;
                     ChangeIntermediateNodeId(nodeMap.get(e).getId());
                     edges.add(edge);
@@ -111,11 +113,19 @@ public class Graph {
             });
         }
     }
-
-    public void getEdgeWeights(){
-        edges.forEach(e->{
-           calculateWeight(e);
-        });
+    //если тип веса = true, то вес ребра будет равнятся его длине, если false то вес ребра будет равен времени в пути(в минутах) с учетом типа дороги и разреешенной максимальной скорости
+    public void getEdgeWeights(Boolean weightType){
+        if(weightType){
+            edges.forEach(e->{
+                calculateEdgeLength(e);
+                e.setWeight(e.getLength());
+            });
+        }else{
+            edges.forEach(e->{
+                calculateEdgeLength(e);
+                e.setWeight((e.getLength()/1000)/e.getMaxSpeed());
+            });
+        }
     }
 
     public void ConvertEdgeSetIntoHashMap(){
@@ -124,14 +134,14 @@ public class Graph {
         });
     }
 
-    private void calculateWeight(Edge edge) {
-    double weight=0;
+    private void calculateEdgeLength(Edge edge) {
+    double length=0;
         NodeOSM node = nodeMap.get(edge.getStartVertexId());
         for(int i=1;i<edge.nodesBetweenVertexes.size();i++) {
-            weight= weight + CalculateDistance(node.getLat(), node.getLon(), nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLat(),nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLon());
+            length= length + CalculateDistance(node.getLat(), node.getLon(), nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLat(),nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLon());
             node = nodeMap.get(edge.nodesBetweenVertexes.get(i));
         }
-        edge.setWeight(weight);
+        edge.setLength(length);
     }
 
     private double CalculateDistance(double strLat, double strLon, double finLat, double finLon){

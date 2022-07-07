@@ -19,7 +19,7 @@ public class Main {
         Node node = document.getFirstChild();
         NodeList nodeList = node.getChildNodes();
 
-        osmParser.CheckWays(nodeList);
+        osmParser.CheckWays(nodeList, Boolean.parseBoolean(args[4]));
         CoordinatesTree root = new CoordinatesTree(nodeList,4);
 
         System.out.println(System.currentTimeMillis() + " ways done");
@@ -33,7 +33,7 @@ public class Main {
         graph.getVertexesFromEdges(root);
         System.out.println(System.currentTimeMillis() + " vertex done" );
 
-        graph.getEdgeWeights();
+        graph.getEdgeWeights(Boolean.valueOf(args[4]));
         System.out.println(System.currentTimeMillis() + " weights done" );
 
         graph.ConvertEdgeSetIntoHashMap();
@@ -60,15 +60,15 @@ public class Main {
         Vertex finVertex  = graph.getClosestVertex(nearFinishtvertex,finish);
 
         DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
-        dijkstraAlgorithm.setInfDistToVertexes(graph,startVertex);
+        dijkstraAlgorithm.setInfWeightToVertexes(graph,startVertex, Boolean.valueOf(args[4]));
         dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
 
         ArrayList<Vertex> path = (ArrayList<Vertex>) dijkstraAlgorithm.getVertexPath(finVertex);
         dijkstraAlgorithm.printPath(path);
 
         System.out.println(System.currentTimeMillis());
-        System.out.println("Расстояние: " + String.format("%.0f",finVertex.getDistFromStart()) + " м");
-        System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getDistFromStart()/1000)) + " мин если двигаться со скоростью 60 км/ч");
+
+
         System.out.println("Madina privet");
     }
 }

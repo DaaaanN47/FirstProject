@@ -4,24 +4,38 @@ public class Vertex implements Comparable<Vertex> {
     private double lat;
     private double lon;
     private Vertex prevVertex;
-    private double distFromStart;
-    private int maxSpeed;
-    public int getMaxSpeed() {
-        return maxSpeed;
+    private double edgeWeightsFromStart;
+
+    private double timeWeightFromStart;
+
+    private double distWeightFromStart;
+    public double getTimeWeightFromStart() {
+        return timeWeightFromStart;
     }
 
-    public void setMaxSpeed(int maxSpeed) {
-        this.maxSpeed = maxSpeed;
+    public void setTimeWeightFromStart(double timeWeightFromStart) {
+        this.timeWeightFromStart = timeWeightFromStart;
+    }
+
+    public double getDistWeightFromStart() {
+        return distWeightFromStart;
+    }
+
+    public void additionAllPathWeight(double dist){
+        distWeightFromStart = distWeightFromStart + dist;
+    }
+    public void setDistWeightFromStart(double distWeightFromStart) {
+        this.distWeightFromStart = distWeightFromStart;
     }
     private String coordinatanesStr;
     public String getCoordinatanesStr() {
         return coordinatanesStr;
     }
-    public double getDistFromStart() {
-        return distFromStart;
+    public double getEdgeWeightsFromStart() {
+        return edgeWeightsFromStart;
     }
-    public void setDistFromStart(double distFromStart) {
-        this.distFromStart = distFromStart;
+    public void setEdgeWeightsFromStart(double edgeWeightsFromStart) {
+        this.edgeWeightsFromStart = edgeWeightsFromStart;
     }
     public Vertex getPrevVertex() {
         return prevVertex;
@@ -67,9 +81,9 @@ public class Vertex implements Comparable<Vertex> {
 
     @Override
     public int compareTo(Vertex vertex) {
-        if(this.getDistFromStart()>vertex.getDistFromStart()){
+        if(this.getEdgeWeightsFromStart()>vertex.getEdgeWeightsFromStart()){
             return 1;
-        } else if(this.getDistFromStart()<vertex.getDistFromStart()){
+        } else if(this.getEdgeWeightsFromStart()<vertex.getEdgeWeightsFromStart()){
             return -1;
         } else {
             return 0;
