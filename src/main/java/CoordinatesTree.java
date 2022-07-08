@@ -14,8 +14,8 @@ public class CoordinatesTree {
     private final double maxLat;
     private final double maxLon;
 
-    private List<CoordinatesTree> children = new ArrayList<>();
-    private Set<Long> containedVertexes = new HashSet<>();
+    private final List<CoordinatesTree> children = new ArrayList<>();
+    private final Set<Long> containedVertexes = new HashSet<>();
 
     //конструктор для корневого элемента
     public CoordinatesTree(NodeList nodeList, int maxLevel){

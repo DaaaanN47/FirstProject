@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DijkstraAlgorithm {
 
@@ -80,9 +81,10 @@ public class DijkstraAlgorithm {
         }
     }
      public void printPath(ArrayList<Vertex> vertices){
-        vertices.forEach(e->{
-            System.out.println(e.getCoordinatanesStr() + ", " );
-        });
+         vertices.forEach(e->{
+             System.out.println(e + ", " );
+         });
+         System.out.println("LINESTRING(" + vertices.stream().map(Vertex::getWKTCoordinates).collect(Collectors.joining(",")) + ")");
      }
      public void printPathDetails(Vertex finVertex, boolean edgeWeightType){
         if(edgeWeightType){

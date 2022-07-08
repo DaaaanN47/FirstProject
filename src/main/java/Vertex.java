@@ -23,10 +23,6 @@ public class Vertex implements Comparable<Vertex> {
     public void setDistWeightFromStart(double distWeightFromStart) {
         this.distWeightFromStart = distWeightFromStart;
     }
-    private String coordinatanesStr;
-    public String getCoordinatanesStr() {
-        return coordinatanesStr;
-    }
     public double getEdgeWeightsFromStart() {
         return edgeWeightsFromStart;
     }
@@ -67,7 +63,6 @@ public class Vertex implements Comparable<Vertex> {
         setId(id);
         setLat(lat);
         setLon(lon);
-        coordinatanesStr= lat + "," + lon;
     }
     //конструктор для создания мнимой вершины из заданных пользователем координат
     public Vertex(double lat, double lon){
@@ -84,5 +79,14 @@ public class Vertex implements Comparable<Vertex> {
         } else {
             return 0;
         }
+    }
+
+    public String getWKTCoordinates() {
+        return lon + " " + lat;
+    }
+
+    @Override
+    public String toString() {
+        return lat + "," + lon;
     }
 }
