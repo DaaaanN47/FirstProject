@@ -1,40 +1,9 @@
 
-public class Vertex implements Comparable<Vertex> {
+public class Vertex  {
     private long id;
     private double lat;
     private double lon;
-    private Vertex prevVertex;
-    private double edgeWeightsFromStart;
 
-    private double timeWeightFromStart;
-
-    private double distWeightFromStart;
-    public double getTimeWeightFromStart() {
-        return timeWeightFromStart;
-    }
-
-    public void setTimeWeightFromStart(double timeWeightFromStart) {
-        this.timeWeightFromStart = timeWeightFromStart;
-    }
-
-    public double getDistWeightFromStart() {
-        return distWeightFromStart;
-    }
-    public void setDistWeightFromStart(double distWeightFromStart) {
-        this.distWeightFromStart = distWeightFromStart;
-    }
-    public double getEdgeWeightsFromStart() {
-        return edgeWeightsFromStart;
-    }
-    public void setEdgeWeightsFromStart(double edgeWeightsFromStart) {
-        this.edgeWeightsFromStart = edgeWeightsFromStart;
-    }
-    public Vertex getPrevVertex() {
-        return prevVertex;
-    }
-    public void setPrevVertex(Vertex prevVertex) {
-        this.prevVertex = prevVertex;
-    }
     public long getId() {
         return id;
     }
@@ -70,16 +39,6 @@ public class Vertex implements Comparable<Vertex> {
         setLon(lon);
     }
 
-    @Override
-    public int compareTo(Vertex vertex) {
-        if(this.getEdgeWeightsFromStart()>vertex.getEdgeWeightsFromStart()){
-            return 1;
-        } else if(this.getEdgeWeightsFromStart()<vertex.getEdgeWeightsFromStart()){
-            return -1;
-        } else {
-            return 0;
-        }
-    }
 
     public String getWKTCoordinates() {
         return lon + " " + lat;

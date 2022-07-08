@@ -33,7 +33,7 @@ public class Main {
         graph.getVertexesFromEdges(root);
         System.out.println(System.currentTimeMillis() + " vertex done" );
 
-        graph.setEdgeWeights(Boolean.valueOf(args[4]));
+        graph.setEdgeWeights(args[4]);
         System.out.println(System.currentTimeMillis() + " weights done" );
 
         graph.ConvertEdgeSetIntoHashMap();
@@ -60,15 +60,14 @@ public class Main {
         Vertex finVertex  = graph.getClosestVertex(nearFinishtvertex,finish);
 
         DijkstraAlgorithm dijkstraAlgorithm = new DijkstraAlgorithm();
-        dijkstraAlgorithm.setInfWeightToVertexes(graph,startVertex, Boolean.valueOf(args[4]));
-        dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
+        //dijkstraAlgorithm.setInfWeightToVertexes(graph,startVertex, Boolean.valueOf(args[4]));
 
-        ArrayList<Vertex> path = (ArrayList<Vertex>) dijkstraAlgorithm.getVertexPath(finVertex);
-        dijkstraAlgorithm.printPath(path);
+        PathContainer pathContainer = dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
+//        ArrayList<Vertex> path = (ArrayList<Vertex>) pathContainer.getVertexPath(finVertex.getId(), graph);
+//        pathContainer.printPath(path, graph);
 
         System.out.println(System.currentTimeMillis());
-
-
+        System.out.println(pathContainer.visitedpathVertexMap.get(finVertex.getId()).getEdgeWeightsFromStart());
         System.out.println("Madina privet");
     }
 }

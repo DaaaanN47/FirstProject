@@ -3,35 +3,39 @@ import java.util.stream.Collectors;
 
 public class DijkstraAlgorithm {
 
-    Queue<Vertex> vertexQueue = new PriorityQueue<>();
+    Queue<PathVertex> vertexQueue = new PriorityQueue<>();
     //если булевая переменная равна true то вес это расстояние, если false, то время в пути
-    public void setInfWeightToVertexes(Graph graph, Vertex start, Boolean weightType){
-        if(weightType){
-            graph.getVertexMap().forEach((key, value) -> {
-                if (value.equals(start)) {
-                    value.setDistWeightFromStart(0);
-                } else {
-                    value.setDistWeightFromStart(Double.MAX_VALUE);
-                }
-                value.setEdgeWeightsFromStart(value.getDistWeightFromStart());
-            });
-        }else{
-            graph.getVertexMap().forEach((key, value) -> {
-                if (value.equals(start)) {
-                    value.setTimeWeightFromStart(0);
-                } else {
-                    value.setTimeWeightFromStart(Double.MAX_VALUE);
-                }
-                value.setEdgeWeightsFromStart(value.getTimeWeightFromStart());
-            });
-        }
-    }
+//    public void setInfWeightToVertexes(Graph graph, Vertex start, Boolean weightType){
+//        if(weightType){
+//            graph.getVertexMap().forEach((key, value) -> {
+//                if (value.equals(start)) {
+//                    value.setDistWeightFromStart(0);
+//                } else {
+//                    value.setDistWeightFromStart(Double.MAX_VALUE);
+//                }
+//                value.setEdgeWeightsFromStart(value.getDistWeightFromStart());
+//            });
+//        }else{
+//            graph.getVertexMap().forEach((key, value) -> {
+//                if (value.equals(start)) {
+//                    value.setTimeWeightFromStart(0);
+//                } else {
+//                    value.setTimeWeightFromStart(Double.MAX_VALUE);
+//                }
+//                value.setEdgeWeightsFromStart(value.getTimeWeightFromStart());
+//            });
+//        }
+//    }
     // небольшое нововведение в алгоритм тут мы сейчас работает уже не конкретно с лдистанцией ребра а с ее весом,
     // что может быть и дистацией и временем, но чтобы выводить значение пройденного расстояния  в случае если в качестве веса ребра было выбрано время,
     // отдельно ведется подсчет пройденного расстояния в не зависимости было ли выбрано вреям или дистанция в качестве веса ребра
-    public void CheckVertexes(Graph graph, Vertex start, Vertex finish){
-        vertexQueue.add(start);
-        //добавили первую точку в очередь о ваозрастанию,
+    public PathContainer CheckVertexes(Graph graph, Vertex start, Vertex finish){
+        PathVertex strPathVertex = new PathVertex(start.getId(), true);
+        PathVertex finPathVertex = new PathVertex(finish.getId());
+        vertexQueue.add(strPathVertex);
+        PathContainer pathContainer = new PathContainer();
+        //добавили первую точку
+        // в очередь о ваозрастанию,
         //далле пробегаемся по очереди в которой пока один элемент но во время итерации нужно добавить точки которые имеют общее ребро с текущей
         //точка найдена далее она проверяется на то есть ли она в очереди или нет, если ее там нет то проверяется,
         // является ли текущее расстояние от старта меньше чем записанное в вершине, если да то добавляем точку в очередь,
@@ -39,60 +43,55 @@ public class DijkstraAlgorithm {
         // с расстоянием в рассматриваемой вершине + вес ребра, если оно второе меньше то мы в объекте меняем старые значения на новые.
         //остановкой цикла будет то, что расстояние записанное в рассмотримаемой вершине из очереди будет больше чем расстояние в объекте финиша.
         while(true){
-            Vertex vertex = vertexQueue.poll();
-            if(vertex.getEdgeWeightsFromStart() > finish.getEdgeWeightsFromStart()){
+            PathVertex vertex = vertexQueue.poll();
+            // проверка на то что конечная точка содержится в списке путей и то что вес в текущей точке больше чем в конечной точке
+            if(pathContainer.visitedpathVertexMap.containsKey(finPathVertex.getId()) && vertex.getEdgeWeightsFromStart() >  pathContainer.visitedpathVertexMap.get(finPathVertex.getId()).getEdgeWeightsFromStart()){
                 break;
-            }else {
-                graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
+            } else {
+                    graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
+
                     Edge edge = graph.edgeMap.get(edgeId);
-                    //справшиваю есть ли такая точка в очереди точек
-                    Vertex otherEdgeSide = graph.getVertexMap().get(edge.getOtherNode(vertex.getId()));
-                    double currentWeight = otherEdgeSide.getEdgeWeightsFromStart();
+                    long otherEdgeNodeId = edge.getOtherNode(vertex.getId());
+                    PathVertex otherVertex;
+                    //спрашиваем есть ли такая точка в списке посещенных точек
+                    if(pathContainer.visitedpathVertexMap.containsKey(otherEdgeNodeId)){
+                        otherVertex  = pathContainer.visitedpathVertexMap.get(otherEdgeNodeId);
+                    } else {
+                        otherVertex = new PathVertex(otherEdgeNodeId);
+                    }
+                    //Vertex otherEdgeSide = graph.getVertexMap().get(edge.getOtherNode(vertex.getId()));
+                    double currentWeight = otherVertex.getEdgeWeightsFromStart();
                     double newWeight = vertex.getEdgeWeightsFromStart() + edge.getWeight();
                     double edgeLength = vertex.getDistWeightFromStart() + edge.getLength();
-                    if(!vertexQueue.contains(otherEdgeSide)){
+                    if(!vertexQueue.contains(otherVertex)){
                         //проверяю является ли расстояние в расмотриваемой точке больше чем в предыдущей точке + вес ребра между ними
                         if(currentWeight>newWeight){
-                            vertexQueue.add(otherEdgeSide);
-                            otherEdgeSide.setEdgeWeightsFromStart(newWeight);
-                            otherEdgeSide.setPrevVertex(vertex);
-                            otherEdgeSide.setDistWeightFromStart(edgeLength);
+                            vertexQueue.add(otherVertex);
+                            otherVertex.setEdgeWeightsFromStart(newWeight);
+                            otherVertex.setPrevVertexId(vertex.getId());
+                            otherVertex.setDistWeightFromStart(edgeLength);
+                            pathContainer.addOrChangeVertexPath(otherVertex);
                         }
                     } else { //если такая точка уже есть в очереди
                         if(currentWeight>newWeight){
-                            otherEdgeSide.setPrevVertex(vertex);
-                            otherEdgeSide.setEdgeWeightsFromStart(newWeight);
-                            otherEdgeSide.setDistWeightFromStart(edgeLength);
+                            otherVertex.setPrevVertexId(vertex.getId());
+                            otherVertex.setEdgeWeightsFromStart(newWeight);
+                            otherVertex.setDistWeightFromStart(edgeLength);
+                            pathContainer.addOrChangeVertexPath(otherVertex);
                         }
                     }
                 });
             }
         }
+        return pathContainer;
     }
-    public List<Vertex> getVertexPath(Vertex finish){
-        List<Vertex> path = new ArrayList<>();
-        getPrevVertexes(finish,path);
-        return path;
-    }
-    private void getPrevVertexes(Vertex vertex, List<Vertex> path) {
-        if (vertex.getPrevVertex() != null) {
-            path.add(vertex.getPrevVertex());
-            getPrevVertexes(vertex.getPrevVertex(), path);
-        }
-    }
-     public void printPath(ArrayList<Vertex> vertices){
-         vertices.forEach(e->{
-             System.out.println(e + ", " );
-         });
-         System.out.println("LINESTRING(" + vertices.stream().map(Vertex::getWKTCoordinates).collect(Collectors.joining(",")) + ")");
-     }
-     public void printPathDetails(Vertex finVertex, boolean edgeWeightType){
-        if(edgeWeightType){
-            System.out.println("Расстояние: " + String.format("%.0f",finVertex.getEdgeWeightsFromStart()) + " м");
-            System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()/1000)/60) + " мин если двигаться со скоростью 60 км/ч");
-        } else {
-            System.out.println("Расстояние: " + String.format("%.2f",finVertex.getDistWeightFromStart()) + " м");
-            System.out.println("Потраченное время "+  String.format("%.2f",(finVertex.getEdgeWeightsFromStart()) + " мин "));
-        }
-     }
+//     public void printPathDetails(Vertex finVertex, boolean edgeWeightType){
+//        if(edgeWeightType){
+//            System.out.println("Расстояние: " + String.format("%.0f",finVertex.getEdgeWeightsFromStart()) + " м");
+//            System.out.println("Потраченное время "+  String.format("%.0f",(finVertex.getEdgeWeightsFromStart()/1000)/60) + " мин если двигаться со скоростью 60 км/ч");
+//        } else {
+//            System.out.println("Расстояние: " + String.format("%.2f",finVertex.getDistWeightFromStart()) + " м");
+//            System.out.println("Потраченное время "+  String.format("%.2f",(finVertex.getEdgeWeightsFromStart()) + " мин "));
+//        }
+//     }
 }

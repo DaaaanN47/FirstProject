@@ -107,14 +107,9 @@ public class OsmParser {
                 graph.getAllNodesIds().add(Long.parseLong(ref));
                 wayOsm.getRefs().add(Long.parseLong(ref));
             }
-            else if(refNode.getNodeName().equals("tag")){
-                String keyStr = refAttributes.getNamedItem("k").getNodeValue();
-                if(keyStr.equals("maxspeed")){
-                    String valStr = refAttributes.getNamedItem("v").getNodeValue();
-                    wayOsm.setMaxSpeed(Integer.parseInt(valStr));
-                    graph.getWayMap().put(wayOsm.getId(), wayOsm);
-                    break;
-                }
+            else{
+                graph.getWayMap().put(wayOsm.getId(), wayOsm);
+                break;
             }
         }
         graph.getWayMap().put(wayOsm.getId(), wayOsm);
@@ -172,6 +167,6 @@ public class OsmParser {
             }
         });
     }
-
+//679640105
 }
 //
