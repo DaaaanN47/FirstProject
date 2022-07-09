@@ -19,7 +19,7 @@ public class Main {
         Node node = document.getFirstChild();
         NodeList nodeList = node.getChildNodes();
 
-        osmParser.CheckWays(nodeList, Boolean.parseBoolean(args[4]));
+        osmParser.CheckWays(nodeList, args[4]);
         CoordinatesTree root = new CoordinatesTree(nodeList,4);
 
         System.out.println(System.currentTimeMillis() + " ways done");
@@ -63,8 +63,8 @@ public class Main {
         //dijkstraAlgorithm.setInfWeightToVertexes(graph,startVertex, Boolean.valueOf(args[4]));
 
         PathContainer pathContainer = dijkstraAlgorithm.CheckVertexes(graph,startVertex,finVertex);
-//        ArrayList<Vertex> path = (ArrayList<Vertex>) pathContainer.getVertexPath(finVertex.getId(), graph);
-//        pathContainer.printPath(path, graph);
+        ArrayList<Vertex> path = (ArrayList<Vertex>) pathContainer.getVertexPath(finVertex.getId(), graph);
+        pathContainer.printPath(path);
 
         System.out.println(System.currentTimeMillis());
         System.out.println(pathContainer.visitedpathVertexMap.get(finVertex.getId()).getEdgeWeightsFromStart());

@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Edge {
     private long id;
@@ -8,6 +11,11 @@ public class Edge {
     private double weight;
     private double length;
 
+    public List<Long> getAllNodesInEdge() {
+        return allNodesInEdge;
+    }
+
+    private List<Long> allNodesInEdge = new ArrayList<>();
     private int maxSpeed;
     public double getLength() {
         return length;
@@ -36,8 +44,6 @@ public class Edge {
     public long getId() {
         return id;
     }
-    public List<Long> nodesBetweenVertexes = new ArrayList<>();
-
     public void setId(long id) {
         this.id = id;
     }
@@ -74,9 +80,18 @@ public class Edge {
         int startNodeIndex = way.getRefs().indexOf(startVertexId);
         int finishNodeIndex = way.getRefs().indexOf(finishvertexId);
         for(int i = startNodeIndex; i<finishNodeIndex+1; i++){
-                nodesBetweenVertexes.add(way.getRefs().get(i));
+                allNodesInEdge.add(way.getRefs().get(i));
         }
     }
-
-
+    public List<Long> getEdgeNodes(long vertexIndex){
+        if(allNodesInEdge.indexOf(vertexIndex)==0){
+            return allNodesInEdge;
+        } else{
+            List<Long> nodeIds = new ArrayList<>();
+            for(int i = allNodesInEdge.size()-1; i > -1; i--){
+                nodeIds.add(allNodesInEdge.get(i));
+            }
+            return nodeIds;
+        }
+    }
 }

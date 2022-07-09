@@ -137,9 +137,9 @@ public class Graph {
     private void calculateEdgeLength(Edge edge) {
     double length=0;
         NodeOSM node = nodeMap.get(edge.getStartVertexId());
-        for(int i=1;i<edge.nodesBetweenVertexes.size();i++) {
-            length= length + CalculateDistance(node.getLat(), node.getLon(), nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLat(),nodeMap.get(edge.nodesBetweenVertexes.get(i)).getLon());
-            node = nodeMap.get(edge.nodesBetweenVertexes.get(i));
+        for(int i = 1; i<edge.getAllNodesInEdge().size(); i++) {
+            length= length + CalculateDistance(node.getLat(), node.getLon(), nodeMap.get(edge.getAllNodesInEdge().get(i)).getLat(),nodeMap.get(edge.getAllNodesInEdge().get(i)).getLon());
+            node = nodeMap.get(edge.getAllNodesInEdge().get(i));
         }
         edge.setLength(length);
     }
@@ -170,5 +170,22 @@ public class Graph {
             }
         });
         return vertexMap.get(getVertexId());
+    }
+
+    public List<Vertex> getAllNodesInEdge(long startId, long finishId){
+        List<Vertex> vertices = new ArrayList<>();
+        for (Edge edge : edges) {
+            if (edge.getOtherNode(startId) == finishId && edge.getOtherNode(finishId) == startId) {
+                List<Long> nodesIds =  edge.getEdgeNodes(startId);
+                nodesIds.forEach(id ->{
+                    double lat = nodeMap.get(id).getLat();
+                    double lon = nodeMap.get(id).getLon();
+                    Vertex vertex = new Vertex(id,lat,lon);
+                    vertices.add(vertex);
+                });
+                return vertices;
+            }
+        }
+        return null;
     }
 }

@@ -1,4 +1,4 @@
-public class PathVertex implements Comparable<PathVertex> {
+public class VisitedVertex implements Comparable<VisitedVertex> {
     private long id;
     private long prevVertexId;
     private double edgeWeightsFromStart;
@@ -47,36 +47,23 @@ public class PathVertex implements Comparable<PathVertex> {
 
 
     @Override
-    public int compareTo(PathVertex pathVertex) {
-        if(this.getEdgeWeightsFromStart()>pathVertex.getEdgeWeightsFromStart()){
+    public int compareTo(VisitedVertex visitedVertex) {
+        if(this.getEdgeWeightsFromStart()> visitedVertex.getEdgeWeightsFromStart()){
             return 1;
-        } else if(this.getEdgeWeightsFromStart()<pathVertex.getEdgeWeightsFromStart()){
+        } else if(this.getEdgeWeightsFromStart()< visitedVertex.getEdgeWeightsFromStart()){
             return -1;
         } else {
             return 0;
         }
     }
-    public PathVertex(long id) {
+    public VisitedVertex(long id) {
         this.id = id;
         this.setDistWeightFromStart(Double.MAX_VALUE);
         this.setEdgeWeightsFromStart(Double.MAX_VALUE);
     }
-    public PathVertex(long id , boolean isStart) {
+    public VisitedVertex(long id , boolean isStart) {
         this.id = id;
         this.setDistWeightFromStart(0);
         this.setEdgeWeightsFromStart(0);
     }
-
-    public PathVertex(long id, long prevVertexId, double edgeWeightsFromStart, double distWeightFromStart) {
-        this.id = id;
-        this.prevVertexId = prevVertexId;
-        this.edgeWeightsFromStart = edgeWeightsFromStart;
-        this.distWeightFromStart = distWeightFromStart;
-    }
-    public String getWKTCoordinates(Graph graph) {
-        double lat = graph.getVertexMap().get(getId()).getLat();
-        double lon  = graph.getVertexMap().get(getId()).getLon();
-        return lon + " " + lat;
-    }
-
 }

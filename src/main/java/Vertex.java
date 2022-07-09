@@ -27,6 +27,7 @@ public class Vertex  {
     public void setLon(double lon) {
         this.lon = lon;
     }
+
     // конструктор для вершины на карте
     public Vertex(long id, double lat, double lon) {
         setId(id);

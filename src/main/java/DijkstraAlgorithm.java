@@ -1,9 +1,8 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DijkstraAlgorithm {
 
-    Queue<PathVertex> vertexQueue = new PriorityQueue<>();
+    Queue<VisitedVertex> vertexQueue = new PriorityQueue<>();
     //если булевая переменная равна true то вес это расстояние, если false, то время в пути
 //    public void setInfWeightToVertexes(Graph graph, Vertex start, Boolean weightType){
 //        if(weightType){
@@ -30,10 +29,11 @@ public class DijkstraAlgorithm {
     // что может быть и дистацией и временем, но чтобы выводить значение пройденного расстояния  в случае если в качестве веса ребра было выбрано время,
     // отдельно ведется подсчет пройденного расстояния в не зависимости было ли выбрано вреям или дистанция в качестве веса ребра
     public PathContainer CheckVertexes(Graph graph, Vertex start, Vertex finish){
-        PathVertex strPathVertex = new PathVertex(start.getId(), true);
-        PathVertex finPathVertex = new PathVertex(finish.getId());
-        vertexQueue.add(strPathVertex);
+        VisitedVertex strVisitedVertex = new VisitedVertex(start.getId(), true);
+        VisitedVertex finVisitedVertex = new VisitedVertex(finish.getId());
+        vertexQueue.add(strVisitedVertex);
         PathContainer pathContainer = new PathContainer();
+        pathContainer.visitedpathVertexMap.put(strVisitedVertex.getId(),strVisitedVertex);
         //добавили первую точку
         // в очередь о ваозрастанию,
         //далле пробегаемся по очереди в которой пока один элемент но во время итерации нужно добавить точки которые имеют общее ребро с текущей
@@ -43,21 +43,21 @@ public class DijkstraAlgorithm {
         // с расстоянием в рассматриваемой вершине + вес ребра, если оно второе меньше то мы в объекте меняем старые значения на новые.
         //остановкой цикла будет то, что расстояние записанное в рассмотримаемой вершине из очереди будет больше чем расстояние в объекте финиша.
         while(true){
-            PathVertex vertex = vertexQueue.poll();
+            VisitedVertex vertex = vertexQueue.poll();
             // проверка на то что конечная точка содержится в списке путей и то что вес в текущей точке больше чем в конечной точке
-            if(pathContainer.visitedpathVertexMap.containsKey(finPathVertex.getId()) && vertex.getEdgeWeightsFromStart() >  pathContainer.visitedpathVertexMap.get(finPathVertex.getId()).getEdgeWeightsFromStart()){
+            if(pathContainer.visitedpathVertexMap.containsKey(finVisitedVertex.getId()) && vertex.getEdgeWeightsFromStart() >  pathContainer.visitedpathVertexMap.get(finVisitedVertex.getId()).getEdgeWeightsFromStart()){
                 break;
             } else {
                     graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
 
                     Edge edge = graph.edgeMap.get(edgeId);
                     long otherEdgeNodeId = edge.getOtherNode(vertex.getId());
-                    PathVertex otherVertex;
+                    VisitedVertex otherVertex;
                     //спрашиваем есть ли такая точка в списке посещенных точек
                     if(pathContainer.visitedpathVertexMap.containsKey(otherEdgeNodeId)){
                         otherVertex  = pathContainer.visitedpathVertexMap.get(otherEdgeNodeId);
                     } else {
-                        otherVertex = new PathVertex(otherEdgeNodeId);
+                        otherVertex = new VisitedVertex(otherEdgeNodeId);
                     }
                     //Vertex otherEdgeSide = graph.getVertexMap().get(edge.getOtherNode(vertex.getId()));
                     double currentWeight = otherVertex.getEdgeWeightsFromStart();
