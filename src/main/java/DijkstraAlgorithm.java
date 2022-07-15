@@ -33,7 +33,7 @@ public class DijkstraAlgorithm {
         VisitedVertex finVisitedVertex = new VisitedVertex(finish.getId());
         vertexQueue.add(strVisitedVertex);
         PathContainer pathContainer = new PathContainer();
-        pathContainer.visitedpathVertexMap.put(strVisitedVertex.getId(),strVisitedVertex);
+        pathContainer.getVisitedpathVertexMap().put(strVisitedVertex.getId(),strVisitedVertex);
         //добавили первую точку
         // в очередь о ваозрастанию,
         //далле пробегаемся по очереди в которой пока один элемент но во время итерации нужно добавить точки которые имеют общее ребро с текущей
@@ -45,7 +45,7 @@ public class DijkstraAlgorithm {
         while(true){
             VisitedVertex vertex = vertexQueue.poll();
             // проверка на то что конечная точка содержится в списке путей и то что вес в текущей точке больше чем в конечной точке
-            if(pathContainer.visitedpathVertexMap.containsKey(finVisitedVertex.getId()) && vertex.getEdgeWeightsFromStart() >  pathContainer.visitedpathVertexMap.get(finVisitedVertex.getId()).getEdgeWeightsFromStart()){
+            if(pathContainer.getVisitedpathVertexMap().containsKey(finVisitedVertex.getId()) && vertex.getEdgeWeightsFromStart() >  pathContainer.getVisitedpathVertexMap().get(finVisitedVertex.getId()).getEdgeWeightsFromStart()){
                 break;
             } else {
                     graph.getVertexesAndItsEdges().get(vertex.getId()).forEach(edgeId->{
@@ -54,8 +54,8 @@ public class DijkstraAlgorithm {
                     long otherEdgeNodeId = edge.getOtherNode(vertex.getId());
                     VisitedVertex otherVertex;
                     //спрашиваем есть ли такая точка в списке посещенных точек
-                    if(pathContainer.visitedpathVertexMap.containsKey(otherEdgeNodeId)){
-                        otherVertex  = pathContainer.visitedpathVertexMap.get(otherEdgeNodeId);
+                    if(pathContainer.getVisitedpathVertexMap().containsKey(otherEdgeNodeId)){
+                        otherVertex  = pathContainer.getVisitedpathVertexMap().get(otherEdgeNodeId);
                     } else {
                         otherVertex = new VisitedVertex(otherEdgeNodeId);
                     }

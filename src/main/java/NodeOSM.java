@@ -4,7 +4,6 @@ public class NodeOSM {
     private long id;
     private double lat;
     private double lon;
-
     private boolean isCrossRoad;
     Set<Long> waysHasNode = new HashSet<>();
     public boolean isCrossRoad() {

@@ -6,8 +6,12 @@ import java.util.stream.Collectors;
 
 public class PathContainer {
 
-    Map<Long, VisitedVertex> visitedpathVertexMap;
 
+
+    private Map<Long, VisitedVertex> visitedpathVertexMap;
+    public Map<Long, VisitedVertex> getVisitedpathVertexMap() {
+        return visitedpathVertexMap;
+    }
     public PathContainer(){
         visitedpathVertexMap = new HashMap<>();
     }

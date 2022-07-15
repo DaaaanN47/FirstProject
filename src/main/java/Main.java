@@ -67,7 +67,7 @@ public class Main {
         pathContainer.printPath(path);
 
         System.out.println(System.currentTimeMillis());
-        System.out.println(pathContainer.visitedpathVertexMap.get(finVertex.getId()).getEdgeWeightsFromStart());
+        System.out.println(pathContainer.getVisitedpathVertexMap().get(finVertex.getId()).getEdgeWeightsFromStart());
         System.out.println("Madina privet");
     }
 }
